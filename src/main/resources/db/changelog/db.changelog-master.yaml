@@ -1,0 +1,127 @@
+databaseChangeLog:
+  - property:
+      name: uuid_function
+      value: gen_random_uuid()
+      dbms: postgresql
+  - property:
+      name: uuid_function
+      value: random_uuid()
+      dbms: h2
+
+  - changeSet:
+      id: Create categories table
+      author: kstoltzfus
+      changes:
+        - createTable:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: Insert categories
+      author: kstoltzfus
+      changes:
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  valueComputed: ${uuid_function}
+              - column:
+                  name: name
+                  value: Income
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  valueComputed: ${uuid_function}
+              - column:
+                  name: name
+                  value: Giving
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  valueComputed: ${uuid_function}
+              - column:
+                  name: name
+                  value: Savings
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  valueComputed: ${uuid_function}
+              - column:
+                  name: name
+                  value: Housing
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  valueComputed: ${uuid_function}
+              - column:
+                  name: name
+                  value: Transportation
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  valueComputed: ${uuid_function}
+              - column:
+                  name: name
+                  value: Food
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  valueComputed: ${uuid_function}
+              - column:
+                  name: name
+                  value: Personal
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  valueComputed: ${uuid_function}
+              - column:
+                  name: name
+                  value: Lifestyle
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  valueComputed: ${uuid_function}
+              - column:
+                  name: name
+                  value: Health
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  valueComputed: ${uuid_function}
+              - column:
+                  name: name
+                  value: Insurance
+
+
+
+

@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: cashcub-api
+  liquibase:
+    url: jdbc:postgresql://${DB_HOST}:5432/cash_cub?schema=cash_cub
+    user: ${DB_USER}
+    password: ${DB_PASSWORD}
+    default-schema: cash_cub
+    liquibase-schema: cash_cub
+  r2dbc:
+    url: r2dbc:postgresql://${DB_HOST}:5432/cash_cub?schema=cash_cub
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
+  devtools:
+    add-properties: false
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  server:
+    port: 8081

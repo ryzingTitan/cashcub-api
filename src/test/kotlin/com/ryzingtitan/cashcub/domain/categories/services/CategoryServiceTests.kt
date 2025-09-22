@@ -58,7 +58,7 @@ class CategoryServiceTests {
     private val firstCategoryId = UUID.randomUUID()
     private val secondCategoryId = UUID.randomUUID()
     private val firstCategoryName = "First Category"
-    private val secondCategoryName = "Secon Category"
+    private val secondCategoryName = "Second Category"
 
     private val firstCategoryEntity =
         CategoryEntity(

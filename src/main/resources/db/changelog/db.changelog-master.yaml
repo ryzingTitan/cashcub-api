@@ -122,6 +122,26 @@ databaseChangeLog:
                   name: name
                   value: Insurance
 
-
-
-
+  - changeSet:
+      id: Create budgets table
+      author: kstoltzfus
+      changes:
+        - createTable:
+            tableName: budgets
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: budget_month
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: budget_year
+                  type: int
+                  constraints:
+                    nullable: false

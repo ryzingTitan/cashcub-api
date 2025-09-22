@@ -1,7 +1,7 @@
 package com.ryzingtitan.cashcub.presentation.controllers
 
-import com.ryzingtitan.cashcub.domain.categories.dtos.Category
-import com.ryzingtitan.cashcub.domain.categories.services.CategoryService
+import com.ryzingtitan.cashcub.domain.budgets.dtos.Budget
+import com.ryzingtitan.cashcub.domain.budgets.services.BudgetService
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -16,47 +16,49 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import java.util.UUID
 
-class CategoryControllerTests {
+class BudgetControllerTests {
     @Nested
-    inner class GetCategories {
+    inner class GetBudgets {
         @Test
-        fun `returns 'OK' status with all categories`() =
+        fun `returns 'OK' status with all budgets`() =
             runTest {
-                whenever(mockCategoryService.getAll()).thenReturn(flowOf(firstCategory, secondCategory))
+                whenever(mockBudgetService.getAll()).thenReturn(flowOf(firstBudget, secondBudget))
 
                 webTestClient
                     .get()
-                    .uri("/api/categories")
+                    .uri("/api/budgets")
                     .accept(MediaType.APPLICATION_JSON)
                     .exchange()
                     .expectStatus()
                     .isOk
-                    .expectBodyList<Category>()
-                    .contains(firstCategory, secondCategory)
+                    .expectBodyList<Budget>()
+                    .contains(firstBudget, secondBudget)
 
-                verify(mockCategoryService, times(1)).getAll()
+                verify(mockBudgetService, times(1)).getAll()
             }
     }
 
     @BeforeEach
     fun setup() {
-        val categoryController = CategoryController(mockCategoryService)
-        webTestClient = WebTestClient.bindToController(categoryController).build()
+        val budgetController = BudgetController(mockBudgetService)
+        webTestClient = WebTestClient.bindToController(budgetController).build()
     }
 
     private lateinit var webTestClient: WebTestClient
 
-    private val mockCategoryService = mock<CategoryService>()
+    private val mockBudgetService = mock<BudgetService>()
 
-    private val firstCategory =
-        Category(
+    private val firstBudget =
+        Budget(
             id = UUID.randomUUID(),
-            name = "Category 1",
+            month = 9,
+            year = 2025,
         )
 
-    private val secondCategory =
-        Category(
+    private val secondBudget =
+        Budget(
             id = UUID.randomUUID(),
-            name = "Category 2",
+            month = 10,
+            year = 2025,
         )
 }

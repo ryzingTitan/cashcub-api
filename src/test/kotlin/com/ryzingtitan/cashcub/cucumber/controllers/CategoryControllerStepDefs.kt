@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
 
 class CategoryControllerStepDefs {
     @When("all categories are retrieved")
-    fun whenAllCategoriesAreRetrieved() {
+    fun allCategoriesAreRetrieved() {
         runBlocking {
             CommonControllerStepDefs.webClient
                 .get()
@@ -40,7 +40,7 @@ class CategoryControllerStepDefs {
     }
 
     @Then("the following categories are returned:")
-    fun thenTheFollowingCategoriesAreReturned(expectedCategories: List<Category>) {
+    fun theFollowingCategoriesAreReturned(expectedCategories: List<Category>) {
         assertEquals(expectedCategories.size, returnedCategories.size)
 
         expectedCategories.forEach { expectedCategory ->

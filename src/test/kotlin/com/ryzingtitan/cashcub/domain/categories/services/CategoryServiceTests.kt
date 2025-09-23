@@ -13,12 +13,12 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import java.util.UUID
 import kotlin.jvm.java
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CategoryServiceTests {

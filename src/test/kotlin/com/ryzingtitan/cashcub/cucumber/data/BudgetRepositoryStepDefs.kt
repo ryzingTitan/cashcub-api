@@ -1,24 +1,40 @@
 package com.ryzingtitan.cashcub.cucumber.data
 
 import com.ryzingtitan.cashcub.data.budgets.entities.BudgetEntity
+import com.ryzingtitan.cashcub.data.budgets.repositories.BudgetRepository
 import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Given
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
-import java.util.UUID
+import io.cucumber.java.en.Then
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
+import kotlin.test.assertEquals
 
 class BudgetRepositoryStepDefs(
-    private val r2dbcEntityTemplate: R2dbcEntityTemplate,
+    private val budgetRepository: BudgetRepository,
 ) {
     @Given("the following budgets exist:")
-    fun theFollowingBudgets(budgets: List<BudgetEntity>) {
-        budgets.forEach { r2dbcEntityTemplate.insert(it).block() }
+    fun theFollowingBudgetsExist(existingBudgets: List<BudgetEntity>) {
+        runBlocking {
+            budgetRepository.saveAll(existingBudgets).toList()
+        }
+    }
+
+    @Then("the following budgets will exist:")
+    fun theFollowingBudgetsWillExist(expectedBudgets: List<BudgetEntity>) {
+        runBlocking {
+            val actualBudgets = budgetRepository.findAll().toList()
+
+            expectedBudgets.forEachIndexed { index, expectedBudget ->
+                assertEquals(expectedBudget.budgetYear, actualBudgets[index].budgetYear)
+                assertEquals(expectedBudget.budgetMonth, actualBudgets[index].budgetMonth)
+            }
+        }
     }
 
     @DataTableType
     fun mapBudgetEntity(tableRow: Map<String, String>): BudgetEntity =
         BudgetEntity(
-            id = UUID.randomUUID(),
-            budgetMonth = tableRow["month"]!!.toInt(),
-            budgetYear = tableRow["year"]!!.toInt(),
+            budgetMonth = tableRow["budgetMonth"]!!.toInt(),
+            budgetYear = tableRow["budgetYear"]!!.toInt(),
         )
 }

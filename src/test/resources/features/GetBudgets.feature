@@ -2,9 +2,9 @@ Feature: Get budgets
 
   Background:
     Given the following budgets exist:
-      | month | year |
-      | 9     | 2025 |
-      | 10    | 2025 |
+      | budgetMonth | budgetYear |
+      | 9           | 2025       |
+      | 10          | 2025       |
 
   Scenario: Get all budgets
     Given the user has a valid authorization token

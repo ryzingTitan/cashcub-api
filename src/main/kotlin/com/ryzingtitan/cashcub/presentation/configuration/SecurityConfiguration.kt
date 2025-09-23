@@ -23,6 +23,8 @@ class SecurityConfiguration {
                     .authenticated()
                     .pathMatchers(HttpMethod.GET, "/api/budgets")
                     .authenticated()
+                    .pathMatchers(HttpMethod.POST, "/api/budgets")
+                    .authenticated()
                     .pathMatchers(HttpMethod.GET, "/actuator/health")
                     .permitAll()
                     .pathMatchers(HttpMethod.GET, "/swagger-ui/**")

@@ -1,9 +1,9 @@
 package com.ryzingtitan.cashcub
 
 import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+import kotlin.test.Test
 
 @SpringBootTest
 @ActiveProfiles("test")

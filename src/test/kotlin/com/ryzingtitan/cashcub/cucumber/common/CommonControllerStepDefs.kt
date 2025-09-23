@@ -1,10 +1,12 @@
 package com.ryzingtitan.cashcub.cucumber.common
 
 import com.nimbusds.jwt.SignedJWT
+import com.ryzingtitan.cashcub.data.budgets.repositories.BudgetRepository
 import io.cucumber.java.After
 import io.cucumber.java.Before
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
+import kotlinx.coroutines.runBlocking
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import org.springframework.boot.test.web.server.LocalServerPort
@@ -12,7 +14,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.WebClient
 import kotlin.test.assertEquals
 
-class CommonControllerStepDefs {
+class CommonControllerStepDefs(
+    private val budgetRepository: BudgetRepository,
+) {
     @Given("the user has a valid authorization token")
     fun theUserHasAValidAuthorizationToken() {
         authorizationToken =
@@ -41,6 +45,10 @@ class CommonControllerStepDefs {
     @After
     fun teardown() {
         mockOAuth2Server.shutdown()
+
+        runBlocking {
+            budgetRepository.deleteAll()
+        }
     }
 
     @LocalServerPort

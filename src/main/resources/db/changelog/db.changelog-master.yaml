@@ -19,6 +19,7 @@ databaseChangeLog:
                   name: id
                   type: uuid
                   autoIncrement: false
+                  defaultValueComputed: ${uuid_function}
                   constraints:
                     primaryKey: true
               - column:
@@ -133,6 +134,7 @@ databaseChangeLog:
                   name: id
                   type: uuid
                   autoIncrement: false
+                  defaultValueComputed: ${uuid_function}
                   constraints:
                     primaryKey: true
               - column:

@@ -1,4 +1,4 @@
-package com.ryzingtitan.cashcub.domain.budgets
+package com.ryzingtitan.cashcub.domain.budgets.exceptions
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus

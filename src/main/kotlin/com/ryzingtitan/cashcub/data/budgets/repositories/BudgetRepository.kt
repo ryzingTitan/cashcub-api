@@ -5,7 +5,7 @@ import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import java.util.UUID
 
 interface BudgetRepository : CoroutineCrudRepository<BudgetEntity, UUID> {
-    suspend fun findBudgetByBudgetMonthAndBudgetYear(
+    suspend fun findByBudgetMonthAndBudgetYear(
         month: Int,
         year: Int,
     ): BudgetEntity?

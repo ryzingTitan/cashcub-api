@@ -1,8 +1,8 @@
 package com.ryzingtitan.cashcub.presentation.controllers
 
-import com.ryzingtitan.cashcub.domain.budgets.DuplicateBudgetException
 import com.ryzingtitan.cashcub.domain.budgets.dtos.Budget
 import com.ryzingtitan.cashcub.domain.budgets.dtos.CreateBudgetRequest
+import com.ryzingtitan.cashcub.domain.budgets.exceptions.DuplicateBudgetException
 import com.ryzingtitan.cashcub.domain.budgets.services.BudgetService
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest

@@ -147,3 +147,44 @@ databaseChangeLog:
                   type: int
                   constraints:
                     nullable: false
+
+  - changeSet:
+      id: Create budget_items table
+      author: kstoltzfus
+      changes:
+        - createTable:
+            tableName: budget_items
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  autoIncrement: false
+                  defaultValueComputed: ${uuid_function}
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: planned_amount
+                  type: currency
+                  constraints:
+                    nullable: false
+              - column:
+                  name: budget_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_budget_item_budget_id
+                    referencedTableName: budgets
+                    referencedColumnNames: id
+              - column:
+                  name: category_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_budget_item_category_id
+                    referencedTableName: categories
+                    referencedColumnNames: id

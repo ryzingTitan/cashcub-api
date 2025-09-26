@@ -5,6 +5,7 @@ import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.cashcub.cucumber.dtos.LogMessage
+import com.ryzingtitan.cashcub.domain.budgetitems.services.BudgetItemService
 import com.ryzingtitan.cashcub.domain.budgets.services.BudgetService
 import com.ryzingtitan.cashcub.domain.categories.services.CategoryService
 import io.cucumber.java.After
@@ -44,6 +45,9 @@ class LoggingStepDefs {
         budgetServiceLogger = LoggerFactory.getLogger(BudgetService::class.java) as Logger
         budgetServiceLogger.addAppender(appender)
 
+        budgetItemServiceLogger = LoggerFactory.getLogger(BudgetItemService::class.java) as Logger
+        budgetItemServiceLogger.addAppender(appender)
+
         appender.context = LoggerContext()
         appender.start()
     }
@@ -55,6 +59,7 @@ class LoggingStepDefs {
 
     private lateinit var categoryServiceLogger: Logger
     private lateinit var budgetServiceLogger: Logger
+    private lateinit var budgetItemServiceLogger: Logger
 
     private val appender: ListAppender<ILoggingEvent> = ListAppender()
 }

@@ -2,9 +2,9 @@ package com.ryzingtitan.cashcub.domain.budgets.services
 
 import com.ryzingtitan.cashcub.data.budgets.entities.BudgetEntity
 import com.ryzingtitan.cashcub.data.budgets.repositories.BudgetRepository
-import com.ryzingtitan.cashcub.domain.budgets.DuplicateBudgetException
 import com.ryzingtitan.cashcub.domain.budgets.dtos.Budget
 import com.ryzingtitan.cashcub.domain.budgets.dtos.CreateBudgetRequest
+import com.ryzingtitan.cashcub.domain.budgets.exceptions.DuplicateBudgetException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.slf4j.Logger
@@ -31,7 +31,7 @@ class BudgetService(
     @Throws(DuplicateBudgetException::class)
     suspend fun create(createBudgetRequest: CreateBudgetRequest): Budget {
         val existingBudget =
-            budgetRepository.findBudgetByBudgetMonthAndBudgetYear(createBudgetRequest.month, createBudgetRequest.year)
+            budgetRepository.findByBudgetMonthAndBudgetYear(createBudgetRequest.month, createBudgetRequest.year)
 
         if (existingBudget != null) {
             val message =

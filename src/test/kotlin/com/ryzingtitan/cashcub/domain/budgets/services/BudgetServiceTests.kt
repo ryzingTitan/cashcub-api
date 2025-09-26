@@ -7,9 +7,9 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.cashcub.data.budgets.entities.BudgetEntity
 import com.ryzingtitan.cashcub.data.budgets.repositories.BudgetRepository
-import com.ryzingtitan.cashcub.domain.budgets.DuplicateBudgetException
 import com.ryzingtitan.cashcub.domain.budgets.dtos.Budget
 import com.ryzingtitan.cashcub.domain.budgets.dtos.CreateBudgetRequest
+import com.ryzingtitan.cashcub.domain.budgets.exceptions.DuplicateBudgetException
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
@@ -53,7 +53,7 @@ class BudgetServiceTests {
                 val createBudgetRequest = CreateBudgetRequest(month = 9, year = 2025)
 
                 whenever(
-                    mockBudgetRepository.findBudgetByBudgetMonthAndBudgetYear(
+                    mockBudgetRepository.findByBudgetMonthAndBudgetYear(
                         createBudgetRequest.month,
                         createBudgetRequest.year,
                     ),
@@ -65,7 +65,7 @@ class BudgetServiceTests {
                 verify(
                     mockBudgetRepository,
                     times(1),
-                ).findBudgetByBudgetMonthAndBudgetYear(createBudgetRequest.month, createBudgetRequest.year)
+                ).findByBudgetMonthAndBudgetYear(createBudgetRequest.month, createBudgetRequest.year)
                 verify(mockBudgetRepository, times(1)).save(firstBudgetEntity.copy(id = null))
 
                 assertEquals(firstBudget, budget)
@@ -83,7 +83,7 @@ class BudgetServiceTests {
                 val createBudgetRequest = CreateBudgetRequest(month = 9, year = 2025)
 
                 whenever(
-                    mockBudgetRepository.findBudgetByBudgetMonthAndBudgetYear(
+                    mockBudgetRepository.findByBudgetMonthAndBudgetYear(
                         createBudgetRequest.month,
                         createBudgetRequest.year,
                     ),
@@ -97,7 +97,7 @@ class BudgetServiceTests {
                 verify(
                     mockBudgetRepository,
                     times(1),
-                ).findBudgetByBudgetMonthAndBudgetYear(createBudgetRequest.month, createBudgetRequest.year)
+                ).findByBudgetMonthAndBudgetYear(createBudgetRequest.month, createBudgetRequest.year)
                 verify(mockBudgetRepository, never()).save(any())
 
                 assertEquals(

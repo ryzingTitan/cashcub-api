@@ -1,6 +1,7 @@
 package com.ryzingtitan.cashcub.cucumber.common
 
 import com.nimbusds.jwt.SignedJWT
+import com.ryzingtitan.cashcub.data.budgetitems.repositories.BudgetItemRepository
 import com.ryzingtitan.cashcub.data.budgets.repositories.BudgetRepository
 import io.cucumber.java.After
 import io.cucumber.java.Before
@@ -16,6 +17,7 @@ import kotlin.test.assertEquals
 
 class CommonControllerStepDefs(
     private val budgetRepository: BudgetRepository,
+    private val budgetItemRepository: BudgetItemRepository,
 ) {
     @Given("the user has a valid authorization token")
     fun theUserHasAValidAuthorizationToken() {
@@ -47,6 +49,7 @@ class CommonControllerStepDefs(
         mockOAuth2Server.shutdown()
 
         runBlocking {
+            budgetItemRepository.deleteAll()
             budgetRepository.deleteAll()
         }
     }

@@ -36,9 +36,9 @@ class BudgetServiceTests {
             runTest {
                 whenever(mockBudgetRepository.findAll()).thenReturn(flowOf(firstBudgetEntity, secondBudgetEntity))
 
-                val categories = budgetService.getAll()
+                val budgets = budgetService.getAll()
 
-                assertEquals(listOf(firstBudget, secondBudget), categories.toList())
+                assertEquals(listOf(firstBudget, secondBudget), budgets.toList())
                 assertEquals(1, appender.list.size)
                 assertEquals(Level.INFO, appender.list[0].level)
                 assertEquals("Retrieving all budgets", appender.list[0].message)

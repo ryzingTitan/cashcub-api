@@ -4,6 +4,7 @@ import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItem
 import com.ryzingtitan.cashcub.domain.budgetitems.dtos.CreateBudgetItemRequest
 import com.ryzingtitan.cashcub.domain.budgetitems.exceptions.DuplicateBudgetItemException
 import com.ryzingtitan.cashcub.domain.budgetitems.services.BudgetItemService
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -15,11 +16,33 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
+import org.springframework.test.web.reactive.server.expectBodyList
 import java.math.BigDecimal
 import java.util.UUID
 import kotlin.test.Test
 
 class BudgetItemControllerTests {
+    @Nested
+    inner class GetBudgetItemsByBudgetId {
+        @Test
+        fun `returns 'OK' status with all budget items for budget`() =
+            runTest {
+                whenever(mockBudgetItemService.getAllByBudgetId(budgetId)).thenReturn(flowOf(budgetItem))
+
+                webTestClient
+                    .get()
+                    .uri("/api/budgets/$budgetId/items")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .exchange()
+                    .expectStatus()
+                    .isOk
+                    .expectBodyList<BudgetItem>()
+                    .contains(budgetItem)
+
+                verify(mockBudgetItemService, times(1)).getAllByBudgetId(budgetId)
+            }
+    }
+
     @Nested
     inner class CreateBudgetItem {
         @Test

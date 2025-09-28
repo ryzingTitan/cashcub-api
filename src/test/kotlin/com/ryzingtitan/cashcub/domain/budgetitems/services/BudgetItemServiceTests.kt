@@ -8,7 +8,8 @@ import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.cashcub.data.budgetitems.entities.BudgetItemEntity
 import com.ryzingtitan.cashcub.data.budgetitems.repositories.BudgetItemRepository
 import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItem
-import com.ryzingtitan.cashcub.domain.budgetitems.dtos.CreateBudgetItemRequest
+import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItemRequest
+import com.ryzingtitan.cashcub.domain.budgetitems.exceptions.BudgetItemDoesNotExistException
 import com.ryzingtitan.cashcub.domain.budgetitems.exceptions.DuplicateBudgetItemException
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
@@ -51,8 +52,8 @@ class BudgetItemServiceTests {
         @Test
         fun `creates a new budget item`() =
             runTest {
-                val createBudgetItemRequest =
-                    CreateBudgetItemRequest(
+                val budgetItemRequest =
+                    BudgetItemRequest(
                         name = name,
                         plannedAmount = plannedAmount,
                         categoryId = categoryId,
@@ -66,12 +67,12 @@ class BudgetItemServiceTests {
                 ).thenReturn(null)
                 whenever(mockBudgetItemRepository.save(budgetItemEntity.copy(id = null))).thenReturn(budgetItemEntity)
 
-                val budgetItem = budgetItemService.create(createBudgetItemRequest, budgetId)
+                val budgetItem = budgetItemService.create(budgetItemRequest, budgetId)
 
                 verify(
                     mockBudgetItemRepository,
                     times(1),
-                ).findByNameAndBudgetId(createBudgetItemRequest.name, budgetId)
+                ).findByNameAndBudgetId(budgetItemRequest.name, budgetId)
                 verify(mockBudgetItemRepository, times(1)).save(budgetItemEntity.copy(id = null))
 
                 assertEquals(expectedBudgetItem, budgetItem)
@@ -84,10 +85,10 @@ class BudgetItemServiceTests {
             }
 
         @Test
-        fun `throws 'DuplicateBudgetItemException' a budget item with the same name and budget id already exists`() =
+        fun `throws 'DuplicateBudgetItemException' when budget item with the same name and budget id already exists`() =
             runTest {
-                val createBudgetItemRequest =
-                    CreateBudgetItemRequest(
+                val budgetItemRequest =
+                    BudgetItemRequest(
                         name = name,
                         plannedAmount = plannedAmount,
                         categoryId = categoryId,
@@ -102,7 +103,7 @@ class BudgetItemServiceTests {
 
                 val exception =
                     assertThrows<DuplicateBudgetItemException> {
-                        budgetItemService.create(createBudgetItemRequest, budgetId)
+                        budgetItemService.create(budgetItemRequest, budgetId)
                     }
 
                 verify(
@@ -119,6 +120,69 @@ class BudgetItemServiceTests {
                 assertEquals(Level.ERROR, appender.list[0].level)
                 assertEquals(
                     "Budget item already exists for name $name and budget id $budgetId",
+                    appender.list[0].message,
+                )
+            }
+    }
+
+    @Nested
+    inner class Update {
+        @Test
+        fun `updates an existing budget item`() =
+            runTest {
+                val updatedName = "Updated budget item"
+
+                val budgetItemRequest =
+                    BudgetItemRequest(
+                        name = updatedName,
+                        plannedAmount = plannedAmount,
+                        categoryId = categoryId,
+                    )
+
+                whenever(mockBudgetItemRepository.findById(budgetItemId)).thenReturn(budgetItemEntity)
+                whenever(
+                    mockBudgetItemRepository.save(budgetItemEntity.copy(name = updatedName)),
+                ).thenReturn(budgetItemEntity.copy(name = updatedName))
+
+                val budgetItem = budgetItemService.update(budgetItemId, budgetId, budgetItemRequest)
+
+                verify(mockBudgetItemRepository, times(1)).findById(budgetItemId)
+                verify(mockBudgetItemRepository, times(1)).save(budgetItemEntity.copy(name = updatedName))
+
+                assertEquals(expectedBudgetItem.copy(name = updatedName), budgetItem)
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("Updating budget item with id $budgetItemId", appender.list[0].message)
+            }
+
+        @Test
+        fun `throws 'BudgetItemDoesNotExistException' when the budget item does not exist`() =
+            runTest {
+                val budgetItemRequest =
+                    BudgetItemRequest(
+                        name = name,
+                        plannedAmount = plannedAmount,
+                        categoryId = categoryId,
+                    )
+
+                whenever(mockBudgetItemRepository.findById(budgetItemId)).thenReturn(null)
+
+                val exception =
+                    assertThrows<BudgetItemDoesNotExistException> {
+                        budgetItemService.update(budgetItemId, budgetId, budgetItemRequest)
+                    }
+
+                verify(mockBudgetItemRepository, times(1)).findById(budgetItemId)
+                verify(mockBudgetItemRepository, never()).save(any())
+
+                assertEquals(
+                    "Budget item with name $name does not exist for budget id $budgetId",
+                    exception.message,
+                )
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.ERROR, appender.list[0].level)
+                assertEquals(
+                    "Budget item with name $name does not exist for budget id $budgetId",
                     appender.list[0].message,
                 )
             }

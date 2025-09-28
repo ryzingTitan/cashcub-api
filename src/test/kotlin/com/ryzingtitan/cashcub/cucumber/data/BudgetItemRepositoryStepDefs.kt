@@ -8,17 +8,19 @@ import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import java.util.UUID
 import kotlin.test.assertEquals
 
 class BudgetItemRepositoryStepDefs(
     private val budgetItemRepository: BudgetItemRepository,
     private val categoryRepository: CategoryRepository,
+    private val r2dbcEntityTemplate: R2dbcEntityTemplate,
 ) {
     @Given("the following budget items exist:")
     fun theFollowingBudgetItemsExist(existingBudgetItems: List<BudgetItemEntity>) {
-        runBlocking {
-            budgetItemRepository.saveAll(existingBudgetItems).toList()
+        existingBudgetItems.forEach { budgetItem ->
+            r2dbcEntityTemplate.insert(budgetItem).block()
         }
     }
 
@@ -45,6 +47,7 @@ class BudgetItemRepositoryStepDefs(
         }
 
         return BudgetItemEntity(
+            id = if (tableRow["id"].isNullOrEmpty()) null else UUID.fromString(tableRow["id"]),
             name = tableRow["name"].toString(),
             plannedAmount = tableRow["plannedAmount"]!!.toBigDecimal(),
             budgetId = UUID.fromString(tableRow["budgetId"]),

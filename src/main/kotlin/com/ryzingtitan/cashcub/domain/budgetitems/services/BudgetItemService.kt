@@ -3,7 +3,8 @@ package com.ryzingtitan.cashcub.domain.budgetitems.services
 import com.ryzingtitan.cashcub.data.budgetitems.entities.BudgetItemEntity
 import com.ryzingtitan.cashcub.data.budgetitems.repositories.BudgetItemRepository
 import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItem
-import com.ryzingtitan.cashcub.domain.budgetitems.dtos.CreateBudgetItemRequest
+import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItemRequest
+import com.ryzingtitan.cashcub.domain.budgetitems.exceptions.BudgetItemDoesNotExistException
 import com.ryzingtitan.cashcub.domain.budgetitems.exceptions.DuplicateBudgetItemException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -32,28 +33,28 @@ class BudgetItemService(
 
     @Throws(DuplicateBudgetItemException::class)
     suspend fun create(
-        createBudgetItemRequest: CreateBudgetItemRequest,
+        budgetItemRequest: BudgetItemRequest,
         budgetId: UUID,
     ): BudgetItem {
         val existingBudgetItem =
-            budgetItemRepository.findByNameAndBudgetId(createBudgetItemRequest.name, budgetId)
+            budgetItemRepository.findByNameAndBudgetId(budgetItemRequest.name, budgetId)
 
         if (existingBudgetItem != null) {
             val message =
-                "Budget item already exists for name ${createBudgetItemRequest.name} and budget id $budgetId"
+                "Budget item already exists for name ${budgetItemRequest.name} and budget id $budgetId"
             logger.error(message)
             throw DuplicateBudgetItemException(message)
         }
 
-        logger.info("Creating a budget item with name ${createBudgetItemRequest.name} for budget id $budgetId")
+        logger.info("Creating a budget item with name ${budgetItemRequest.name} for budget id $budgetId")
 
         val createdBudgetItem =
             budgetItemRepository.save(
                 BudgetItemEntity(
-                    name = createBudgetItemRequest.name,
-                    plannedAmount = createBudgetItemRequest.plannedAmount,
+                    name = budgetItemRequest.name,
+                    plannedAmount = budgetItemRequest.plannedAmount,
                     budgetId = budgetId,
-                    categoryId = createBudgetItemRequest.categoryId,
+                    categoryId = budgetItemRequest.categoryId,
                 ),
             )
 
@@ -63,6 +64,42 @@ class BudgetItemService(
             plannedAmount = createdBudgetItem.plannedAmount.setScale(2),
             budgetId = createdBudgetItem.budgetId,
             categoryId = createdBudgetItem.categoryId,
+        )
+    }
+
+    @Throws(BudgetItemDoesNotExistException::class)
+    suspend fun update(
+        budgetItemId: UUID,
+        budgetId: UUID,
+        budgetItemRequest: BudgetItemRequest,
+    ): BudgetItem {
+        val existingBudgetItem = budgetItemRepository.findById(budgetItemId)
+
+        if (existingBudgetItem == null) {
+            val message = "Budget item with name ${budgetItemRequest.name} does not exist for budget id $budgetId"
+            logger.error(message)
+            throw BudgetItemDoesNotExistException(message)
+        }
+
+        logger.info("Updating budget item with id $budgetItemId")
+
+        val updatedBudgetItemEntity =
+            budgetItemRepository.save(
+                BudgetItemEntity(
+                    id = budgetItemId,
+                    name = budgetItemRequest.name,
+                    plannedAmount = budgetItemRequest.plannedAmount,
+                    budgetId = budgetId,
+                    categoryId = budgetItemRequest.categoryId,
+                ),
+            )
+
+        return BudgetItem(
+            id = updatedBudgetItemEntity.id!!,
+            name = updatedBudgetItemEntity.name,
+            plannedAmount = updatedBudgetItemEntity.plannedAmount,
+            budgetId = updatedBudgetItemEntity.budgetId,
+            categoryId = updatedBudgetItemEntity.categoryId,
         )
     }
 

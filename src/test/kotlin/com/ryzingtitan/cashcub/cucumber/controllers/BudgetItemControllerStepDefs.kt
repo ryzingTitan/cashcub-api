@@ -3,7 +3,7 @@ package com.ryzingtitan.cashcub.cucumber.controllers
 import com.ryzingtitan.cashcub.cucumber.common.CommonControllerStepDefs
 import com.ryzingtitan.cashcub.data.categories.repositories.CategoryRepository
 import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItem
-import com.ryzingtitan.cashcub.domain.budgetitems.dtos.CreateBudgetItemRequest
+import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItemRequest
 import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
@@ -46,13 +46,13 @@ class BudgetItemControllerStepDefs(
     @When("a budget item is created with the following data for budget {string}:")
     fun aBudgetItemIsCreatedWithTheFollowingDataForBudget(
         budgetId: String,
-        createBudgetItemRequests: List<CreateBudgetItemRequest>,
+        budgetItemRequests: List<BudgetItemRequest>,
     ) {
         runBlocking {
             CommonControllerStepDefs.webClient
                 .post()
                 .uri("/budgets/$budgetId/items")
-                .bodyValue(createBudgetItemRequests.first())
+                .bodyValue(budgetItemRequests.first())
                 .accept(MediaType.APPLICATION_JSON)
                 .header(
                     "Authorization",
@@ -61,6 +61,35 @@ class BudgetItemControllerStepDefs(
                     CommonControllerStepDefs.responseStatus = clientResponse.statusCode() as HttpStatus
 
                     if (clientResponse.statusCode() == HttpStatus.CREATED) {
+                        val budgetItem = clientResponse.awaitEntity<BudgetItem>().body
+
+                        if (budgetItem != null) {
+                            returnedBudgetItems.add(budgetItem)
+                        }
+                    }
+                }
+        }
+    }
+
+    @When("a budget item with id {string} is updated with the following data for budget {string}:")
+    fun aBudgetItemWithIdIsUpdatedWithTheFollowingDataForBudget(
+        budgetItemId: String,
+        budgetId: String,
+        budgetItemRequests: List<BudgetItemRequest>,
+    ) {
+        runBlocking {
+            CommonControllerStepDefs.webClient
+                .put()
+                .uri("/budgets/$budgetId/items/$budgetItemId")
+                .bodyValue(budgetItemRequests.first())
+                .accept(MediaType.APPLICATION_JSON)
+                .header(
+                    "Authorization",
+                    "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
+                ).awaitExchange { clientResponse ->
+                    CommonControllerStepDefs.responseStatus = clientResponse.statusCode() as HttpStatus
+
+                    if (clientResponse.statusCode() == HttpStatus.OK) {
                         val budgetItem = clientResponse.awaitEntity<BudgetItem>().body
 
                         if (budgetItem != null) {
@@ -99,14 +128,14 @@ class BudgetItemControllerStepDefs(
     }
 
     @DataTableType
-    fun mapCreateBudgetItemRequest(tableRow: Map<String, String>): CreateBudgetItemRequest {
+    fun mapCreateBudgetItemRequest(tableRow: Map<String, String>): BudgetItemRequest {
         lateinit var categoryId: UUID
 
         runBlocking {
             categoryId = categoryRepository.findByName(tableRow["categoryName"].toString())!!.id!!
         }
 
-        return CreateBudgetItemRequest(
+        return BudgetItemRequest(
             name = tableRow["name"].toString(),
             plannedAmount = tableRow["plannedAmount"]!!.toBigDecimal(),
             categoryId = categoryId,

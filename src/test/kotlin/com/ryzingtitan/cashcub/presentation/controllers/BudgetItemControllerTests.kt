@@ -1,7 +1,8 @@
 package com.ryzingtitan.cashcub.presentation.controllers
 
 import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItem
-import com.ryzingtitan.cashcub.domain.budgetitems.dtos.CreateBudgetItemRequest
+import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItemRequest
+import com.ryzingtitan.cashcub.domain.budgetitems.exceptions.BudgetItemDoesNotExistException
 import com.ryzingtitan.cashcub.domain.budgetitems.exceptions.DuplicateBudgetItemException
 import com.ryzingtitan.cashcub.domain.budgetitems.services.BudgetItemService
 import kotlinx.coroutines.flow.flowOf
@@ -48,52 +49,107 @@ class BudgetItemControllerTests {
         @Test
         fun `returns 'OK' status with created budget item`() =
             runTest {
-                val createBudgetItemRequest =
-                    CreateBudgetItemRequest(
+                val budgetItemRequest =
+                    BudgetItemRequest(
                         name = name,
                         plannedAmount = plannedAmount,
                         categoryId = categoryId,
                     )
 
-                whenever(mockBudgetItemService.create(createBudgetItemRequest, budgetId)).thenReturn(budgetItem)
+                whenever(mockBudgetItemService.create(budgetItemRequest, budgetId)).thenReturn(budgetItem)
 
                 webTestClient
                     .post()
                     .uri("/api/budgets/$budgetId/items")
                     .accept(MediaType.APPLICATION_JSON)
-                    .bodyValue(createBudgetItemRequest)
+                    .bodyValue(budgetItemRequest)
                     .exchange()
                     .expectStatus()
                     .isCreated
                     .expectBody<BudgetItem>()
                     .isEqualTo(budgetItem)
 
-                verify(mockBudgetItemService, times(1)).create(createBudgetItemRequest, budgetId)
+                verify(mockBudgetItemService, times(1)).create(budgetItemRequest, budgetId)
             }
 
         @Test
         fun `returns 'CONFLICT' status when budget item already exists`() =
             runTest {
-                val createBudgetItemRequest =
-                    CreateBudgetItemRequest(
+                val budgetItemRequest =
+                    BudgetItemRequest(
                         name = name,
                         plannedAmount = plannedAmount,
                         categoryId = categoryId,
                     )
 
-                whenever(mockBudgetItemService.create(createBudgetItemRequest, budgetId))
+                whenever(mockBudgetItemService.create(budgetItemRequest, budgetId))
                     .thenThrow(DuplicateBudgetItemException("Budget item already exists"))
 
                 webTestClient
                     .post()
                     .uri("/api/budgets/$budgetId/items")
                     .accept(MediaType.APPLICATION_JSON)
-                    .bodyValue(createBudgetItemRequest)
+                    .bodyValue(budgetItemRequest)
                     .exchange()
                     .expectStatus()
                     .isEqualTo(HttpStatus.CONFLICT)
 
-                verify(mockBudgetItemService, times(1)).create(createBudgetItemRequest, budgetId)
+                verify(mockBudgetItemService, times(1)).create(budgetItemRequest, budgetId)
+            }
+    }
+
+    @Nested
+    inner class UpdateBudgetItem {
+        @Test
+        fun `returns 'OK' status with updated budget item`() =
+            runTest {
+                val budgetItemRequest =
+                    BudgetItemRequest(
+                        name = name,
+                        plannedAmount = plannedAmount,
+                        categoryId = categoryId,
+                    )
+
+                whenever(mockBudgetItemService.update(budgetItemId, budgetId, budgetItemRequest)).thenReturn(budgetItem)
+
+                webTestClient
+                    .put()
+                    .uri("/api/budgets/$budgetId/items/$budgetItemId")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .bodyValue(budgetItemRequest)
+                    .exchange()
+                    .expectStatus()
+                    .isOk
+                    .expectBody<BudgetItem>()
+                    .isEqualTo(budgetItem)
+
+                verify(mockBudgetItemService, times(1)).update(budgetItemId, budgetId, budgetItemRequest)
+            }
+
+        @Test
+        fun `returns 'NOT FOUND' status when budget item does not exist`() =
+            runTest {
+                val budgetItemRequest =
+                    BudgetItemRequest(
+                        name = name,
+                        plannedAmount = plannedAmount,
+                        categoryId = categoryId,
+                    )
+
+                whenever(mockBudgetItemService.update(budgetItemId, budgetId, budgetItemRequest)).thenThrow(
+                    BudgetItemDoesNotExistException("Budget item does not exist"),
+                )
+
+                webTestClient
+                    .put()
+                    .uri("/api/budgets/$budgetId/items/$budgetItemId")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .bodyValue(budgetItemRequest)
+                    .exchange()
+                    .expectStatus()
+                    .isNotFound
+
+                verify(mockBudgetItemService, times(1)).update(budgetItemId, budgetId, budgetItemRequest)
             }
     }
 

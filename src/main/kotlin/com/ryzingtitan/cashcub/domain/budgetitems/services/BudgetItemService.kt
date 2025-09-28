@@ -103,8 +103,11 @@ class BudgetItemService(
         )
     }
 
-    suspend fun delete(budgetItemId: UUID) {
-        logger.info("Deleting budget item with id $budgetItemId")
+    suspend fun delete(
+        budgetItemId: UUID,
+        budgetId: UUID,
+    ) {
+        logger.info("Deleting budget item with id $budgetItemId from budget id $budgetId")
         budgetItemRepository.deleteById(budgetItemId)
     }
 

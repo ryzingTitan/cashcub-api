@@ -153,6 +153,23 @@ class BudgetItemControllerTests {
             }
     }
 
+    @Nested
+    inner class DeleteBudgetItem {
+        @Test
+        fun `returns 'OK' status`() =
+            runTest {
+                webTestClient
+                    .delete()
+                    .uri("/api/budgets/$budgetId/items/$budgetItemId")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .exchange()
+                    .expectStatus()
+                    .isOk
+
+                verify(mockBudgetItemService, times(1)).delete(budgetItemId)
+            }
+    }
+
     @BeforeEach
     fun setup() {
         val budgetItemController = BudgetItemController(mockBudgetItemService)

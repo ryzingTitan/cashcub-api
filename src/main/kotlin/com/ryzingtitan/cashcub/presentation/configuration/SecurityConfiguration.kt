@@ -27,6 +27,8 @@ class SecurityConfiguration {
                     .authenticated()
                     .pathMatchers(HttpMethod.PUT, "/api/budgets/*/items/*")
                     .authenticated()
+                    .pathMatchers(HttpMethod.DELETE, "/api/budgets/*/items/*")
+                    .authenticated()
                     .pathMatchers(HttpMethod.GET, "/actuator/health")
                     .permitAll()
                     .pathMatchers(HttpMethod.GET, "/swagger-ui/**")

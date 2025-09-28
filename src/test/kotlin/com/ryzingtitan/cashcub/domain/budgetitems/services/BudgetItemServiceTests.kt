@@ -193,13 +193,16 @@ class BudgetItemServiceTests {
         @Test
         fun `deletes an existing budget item`() =
             runTest {
-                budgetItemService.delete(budgetItemId)
+                budgetItemService.delete(budgetItemId, budgetId)
 
                 verify(mockBudgetItemRepository, times(1)).deleteById(budgetItemId)
 
                 assertEquals(1, appender.list.size)
                 assertEquals(Level.INFO, appender.list[0].level)
-                assertEquals("Deleting budget item with id $budgetItemId", appender.list[0].message)
+                assertEquals(
+                    "Deleting budget item with id $budgetItemId from budget id $budgetId",
+                    appender.list[0].message,
+                )
             }
     }
 

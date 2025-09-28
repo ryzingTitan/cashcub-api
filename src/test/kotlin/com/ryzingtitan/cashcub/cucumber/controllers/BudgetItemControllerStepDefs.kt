@@ -147,7 +147,7 @@ class BudgetItemControllerStepDefs(
     }
 
     @DataTableType
-    fun mapCreateBudgetItemRequest(tableRow: Map<String, String>): BudgetItemRequest {
+    fun mapBudgetItemRequest(tableRow: Map<String, String>): BudgetItemRequest {
         lateinit var categoryId: UUID
 
         runBlocking {

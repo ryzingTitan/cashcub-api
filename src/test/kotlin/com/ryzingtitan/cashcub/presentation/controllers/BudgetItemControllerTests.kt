@@ -166,7 +166,7 @@ class BudgetItemControllerTests {
                     .expectStatus()
                     .isOk
 
-                verify(mockBudgetItemService, times(1)).delete(budgetItemId)
+                verify(mockBudgetItemService, times(1)).delete(budgetItemId, budgetId)
             }
     }
 

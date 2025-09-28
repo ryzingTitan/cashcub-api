@@ -8,6 +8,7 @@ import com.ryzingtitan.cashcub.cucumber.dtos.LogMessage
 import com.ryzingtitan.cashcub.domain.budgetitems.services.BudgetItemService
 import com.ryzingtitan.cashcub.domain.budgets.services.BudgetService
 import com.ryzingtitan.cashcub.domain.categories.services.CategoryService
+import com.ryzingtitan.cashcub.domain.transactions.services.TransactionService
 import io.cucumber.java.After
 import io.cucumber.java.Before
 import io.cucumber.java.DataTableType
@@ -48,6 +49,9 @@ class LoggingStepDefs {
         budgetItemServiceLogger = LoggerFactory.getLogger(BudgetItemService::class.java) as Logger
         budgetItemServiceLogger.addAppender(appender)
 
+        transactionServiceLogger = LoggerFactory.getLogger(TransactionService::class.java) as Logger
+        transactionServiceLogger.addAppender(appender)
+
         appender.context = LoggerContext()
         appender.start()
     }
@@ -60,6 +64,7 @@ class LoggingStepDefs {
     private lateinit var categoryServiceLogger: Logger
     private lateinit var budgetServiceLogger: Logger
     private lateinit var budgetItemServiceLogger: Logger
+    private lateinit var transactionServiceLogger: Logger
 
     private val appender: ListAppender<ILoggingEvent> = ListAppender()
 }

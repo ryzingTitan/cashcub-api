@@ -188,3 +188,55 @@ databaseChangeLog:
                     foreignKeyName: fk_budget_item_category_id
                     referencedTableName: categories
                     referencedColumnNames: id
+
+  - changeSet:
+      id: Create transactions table
+      author: kstoltzfus
+      changes:
+        - createTable:
+            tableName: transactions
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  autoIncrement: false
+                  defaultValueComputed: ${uuid_function}
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: date
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: currency
+                  constraints:
+                    nullable: false
+              - column:
+                  name: transaction_type
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: merchant
+                  type: varchar
+              - column:
+                  name: notes
+                  type: varchar
+              - column:
+                  name: budget_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_transaction_budget_id
+                    referencedTableName: budgets
+                    referencedColumnNames: id
+              - column:
+                  name: budget_item_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_transaction_budget_item_id
+                    referencedTableName: budget_items
+                    referencedColumnNames: id

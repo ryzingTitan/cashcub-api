@@ -157,8 +157,9 @@ class BudgetItemController(
         ],
     )
     suspend fun deleteBudgetItem(
+        @PathVariable(name = "budgetId") budgetId: UUID,
         @PathVariable(name = "budgetItemId") budgetItemId: UUID,
     ) {
-        budgetItemService.delete(budgetItemId)
+        budgetItemService.delete(budgetItemId, budgetId)
     }
 }

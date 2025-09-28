@@ -100,6 +100,25 @@ class BudgetItemControllerStepDefs(
         }
     }
 
+    @When("a budget item with id {string} is deleted for budget {string}")
+    fun aBudgetItemWithIdIsDeletedForBudget(
+        budgetItemId: String,
+        budgetId: String,
+    ) {
+        runBlocking {
+            CommonControllerStepDefs.webClient
+                .delete()
+                .uri("/budgets/$budgetId/items/$budgetItemId")
+                .accept(MediaType.APPLICATION_JSON)
+                .header(
+                    "Authorization",
+                    "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
+                ).awaitExchange { clientResponse ->
+                    CommonControllerStepDefs.responseStatus = clientResponse.statusCode() as HttpStatus
+                }
+        }
+    }
+
     @Then("the following budget items are returned:")
     fun theFollowingBudgetItemsAreReturned(expectedBudgetItems: List<BudgetItem>) {
         expectedBudgetItems.forEachIndexed { index, expectedBudgetItem ->

@@ -103,5 +103,10 @@ class BudgetItemService(
         )
     }
 
+    suspend fun delete(budgetItemId: UUID) {
+        logger.info("Deleting budget item with id $budgetItemId")
+        budgetItemRepository.deleteById(budgetItemId)
+    }
+
     private val logger: Logger = LoggerFactory.getLogger(BudgetItemService::class.java)
 }

@@ -87,7 +87,7 @@ class BudgetItemController(
         ],
     )
     suspend fun createBudgetItem(
-        @PathVariable("budgetId") budgetId: UUID,
+        @PathVariable budgetId: UUID,
         @RequestBody budgetItemRequest: BudgetItemRequest,
     ): BudgetItem = budgetItemService.create(budgetItemRequest, budgetId)
 
@@ -124,8 +124,8 @@ class BudgetItemController(
         ],
     )
     suspend fun updateBudgetItem(
-        @PathVariable(name = "budgetId") budgetId: UUID,
-        @PathVariable(name = "budgetItemId") budgetItemId: UUID,
+        @PathVariable budgetId: UUID,
+        @PathVariable budgetItemId: UUID,
         @RequestBody budgetItemRequest: BudgetItemRequest,
     ): BudgetItem = budgetItemService.update(budgetItemId, budgetId, budgetItemRequest)
 
@@ -157,8 +157,8 @@ class BudgetItemController(
         ],
     )
     suspend fun deleteBudgetItem(
-        @PathVariable(name = "budgetId") budgetId: UUID,
-        @PathVariable(name = "budgetItemId") budgetItemId: UUID,
+        @PathVariable budgetId: UUID,
+        @PathVariable budgetItemId: UUID,
     ) {
         budgetItemService.delete(budgetItemId, budgetId)
     }

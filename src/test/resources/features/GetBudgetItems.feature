@@ -1,4 +1,4 @@
-Feature: Get budget items
+Feature: Get budget items for a budget
 
   Background:
     Given the following budgets exist:

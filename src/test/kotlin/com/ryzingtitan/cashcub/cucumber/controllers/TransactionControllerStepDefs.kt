@@ -11,12 +11,40 @@ import kotlinx.coroutines.runBlocking
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.awaitEntity
+import org.springframework.web.reactive.function.client.awaitEntityList
 import org.springframework.web.reactive.function.client.awaitExchange
 import java.time.Instant
 import java.util.UUID
 import kotlin.test.assertEquals
 
 class TransactionControllerStepDefs {
+    @When("all transactions are retrieved for budget item {string} and  budget {string}")
+    fun allTransactionsAreRetrievedForBudgetItemAndBudget(
+        budgetItemId: String,
+        budgetId: String,
+    ) {
+        runBlocking {
+            CommonControllerStepDefs.webClient
+                .get()
+                .uri("/budgets/$budgetId/items/$budgetItemId/transactions")
+                .accept(MediaType.APPLICATION_JSON)
+                .header(
+                    "Authorization",
+                    "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
+                ).awaitExchange { clientResponse ->
+                    CommonControllerStepDefs.responseStatus = clientResponse.statusCode() as HttpStatus
+
+                    if (clientResponse.statusCode() == HttpStatus.OK) {
+                        val transactions = clientResponse.awaitEntityList<Transaction>().body
+
+                        if (transactions != null) {
+                            returnedTransactions.addAll(transactions)
+                        }
+                    }
+                }
+        }
+    }
+
     @When("a transaction is created with the following data for budget {string} and budget item {string}:")
     fun aTransactionIsCreatedWithTheFollowingDataForBudgetAndBudgetItem(
         budgetId: String,

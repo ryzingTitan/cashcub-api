@@ -38,6 +38,8 @@ class BudgetServiceTests {
 
                 val budgets = budgetService.getAll()
 
+                verify(mockBudgetRepository, times(1)).findAll()
+
                 assertEquals(listOf(firstBudget, secondBudget), budgets.toList())
                 assertEquals(1, appender.list.size)
                 assertEquals(Level.INFO, appender.list[0].level)

@@ -10,6 +10,8 @@ import com.ryzingtitan.cashcub.data.transactions.repositories.TransactionReposit
 import com.ryzingtitan.cashcub.domain.transactions.dtos.Transaction
 import com.ryzingtitan.cashcub.domain.transactions.dtos.TransactionRequest
 import com.ryzingtitan.cashcub.domain.transactions.enums.TransactionType
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -25,6 +27,29 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class TransactionServiceTests {
+    @Nested
+    inner class GetAllByBudgetItemIdAndBudgetId {
+        @Test
+        fun `returns all transactions for a budget item and budget`() =
+            runTest {
+                whenever(
+                    mockTransactionRepository.findAllByBudgetItemIdAndBudgetId(budgetItemId, budgetId),
+                ).thenReturn(flowOf(transactionEntity))
+
+                val transactions = transactionService.getAllByBudgetItemIdAndBudgetId(budgetItemId, budgetId)
+
+                verify(mockTransactionRepository, times(1)).findAllByBudgetItemIdAndBudgetId(budgetItemId, budgetId)
+
+                assertEquals(listOf(expectedTransaction), transactions.toList())
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals(
+                    "Retrieving all transactions for budget item id $budgetItemId and budget id $budgetId",
+                    appender.list[0].message,
+                )
+            }
+    }
+
     @Nested
     inner class Create {
         @Test

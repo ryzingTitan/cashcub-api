@@ -14,6 +14,8 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import java.util.UUID
@@ -30,6 +32,8 @@ class CategoryServiceTests {
                 whenever(mockCategoryRepository.findAll()).thenReturn(flowOf(firstCategoryEntity, secondCategoryEntity))
 
                 val categories = categoryService.getAll()
+
+                verify(mockCategoryRepository, times(1)).findAll()
 
                 assertEquals(listOf(firstCategory, secondCategory), categories.toList())
                 assertEquals(1, appender.list.size)

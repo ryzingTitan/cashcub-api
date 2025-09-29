@@ -4,16 +4,27 @@ import com.ryzingtitan.cashcub.data.transactions.entities.TransactionEntity
 import com.ryzingtitan.cashcub.data.transactions.repositories.TransactionRepository
 import com.ryzingtitan.cashcub.domain.transactions.enums.TransactionType
 import io.cucumber.java.DataTableType
+import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import java.time.Instant
 import java.util.UUID
+import kotlin.collections.forEach
 import kotlin.test.assertEquals
 
 class TransactionRepositoryStepDefs(
     private val transactionRepository: TransactionRepository,
+    private val r2dbcEntityTemplate: R2dbcEntityTemplate,
 ) {
+    @Given("the following transactions exist:")
+    fun theFollowingTransactionsExist(existingTransactions: List<TransactionEntity>) {
+        existingTransactions.forEach { transaction ->
+            r2dbcEntityTemplate.insert(transaction).block()
+        }
+    }
+
     @Then("the following transactions will exist:")
     fun theFollowingTransactionsWillExist(expectedTransactions: List<TransactionEntity>) {
         runBlocking {

@@ -4,6 +4,7 @@ import com.ryzingtitan.cashcub.domain.transactions.dtos.Transaction
 import com.ryzingtitan.cashcub.domain.transactions.dtos.TransactionRequest
 import com.ryzingtitan.cashcub.domain.transactions.enums.TransactionType
 import com.ryzingtitan.cashcub.domain.transactions.services.TransactionService
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -14,12 +15,35 @@ import org.mockito.kotlin.whenever
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
+import org.springframework.test.web.reactive.server.expectBodyList
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.UUID
 import kotlin.test.Test
 
 class TransactionControllerTests {
+    @Nested
+    inner class GetTransactionsByBudgetItemIdAndBudgetId {
+        @Test
+        fun `returns 'OK' status with all transactions for budget item and budget`() =
+            runTest {
+                whenever(mockTransactionService.getAllByBudgetItemIdAndBudgetId(budgetItemId, budgetId))
+                    .thenReturn(flowOf(transaction))
+
+                webTestClient
+                    .get()
+                    .uri("/api/budgets/$budgetId/items/$budgetItemId/transactions")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .exchange()
+                    .expectStatus()
+                    .isOk
+                    .expectBodyList<Transaction>()
+                    .contains(transaction)
+
+                verify(mockTransactionService, times(1)).getAllByBudgetItemIdAndBudgetId(budgetItemId, budgetId)
+            }
+    }
+
     @Nested
     inner class CreateTransaction {
         @Test

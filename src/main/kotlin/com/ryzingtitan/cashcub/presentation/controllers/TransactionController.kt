@@ -9,7 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
+import kotlinx.coroutines.flow.Flow
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -23,6 +25,33 @@ import java.util.UUID
 class TransactionController(
     private val transactionService: TransactionService,
 ) {
+    @GetMapping
+    @Tag(name = "Transactions")
+    @Operation(summary = "Retrieve all transactions for a budget item and a budget")
+    @SecurityRequirement(name = "jwt")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "The list of transactions for the budget item and budget",
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized - Ensure the authorization token is valid",
+                content = arrayOf(Content()),
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal Server Error",
+                content = arrayOf(Content()),
+            ),
+        ],
+    )
+    suspend fun getTransactionsByBudgetItemIdAndBudgetId(
+        @PathVariable budgetId: UUID,
+        @PathVariable budgetItemId: UUID,
+    ): Flow<Transaction> = transactionService.getAllByBudgetItemIdAndBudgetId(budgetItemId, budgetId)
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Tag(name = "Transactions")
@@ -52,8 +81,8 @@ class TransactionController(
         ],
     )
     suspend fun createTransaction(
-        @PathVariable("budgetId") budgetId: UUID,
-        @PathVariable("budgetItemId") budgetItemId: UUID,
+        @PathVariable budgetId: UUID,
+        @PathVariable budgetItemId: UUID,
         @RequestBody transactionRequest: TransactionRequest,
     ): Transaction = transactionService.create(transactionRequest, budgetId, budgetItemId)
 }

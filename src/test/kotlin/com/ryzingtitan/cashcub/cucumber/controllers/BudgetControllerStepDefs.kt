@@ -70,6 +70,8 @@ class BudgetControllerStepDefs {
 
     @Then("the following budgets are returned:")
     fun theFollowingBudgetsAreReturned(expectedBudgets: List<Budget>) {
+        assertEquals(expectedBudgets.size, returnedBudgets.size)
+
         expectedBudgets.forEachIndexed { index, expectedBudget ->
             assertEquals(expectedBudget.year, returnedBudgets[index].year)
             assertEquals(expectedBudget.month, returnedBudgets[index].month)

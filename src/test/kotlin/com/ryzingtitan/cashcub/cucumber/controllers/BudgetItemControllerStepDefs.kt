@@ -121,6 +121,8 @@ class BudgetItemControllerStepDefs(
 
     @Then("the following budget items are returned:")
     fun theFollowingBudgetItemsAreReturned(expectedBudgetItems: List<BudgetItem>) {
+        assertEquals(expectedBudgetItems.size, returnedBudgetItems.size)
+
         expectedBudgetItems.forEachIndexed { index, expectedBudgetItem ->
             assertEquals(expectedBudgetItem.name, returnedBudgetItems[index].name)
             assertEquals(expectedBudgetItem.plannedAmount, returnedBudgetItems[index].plannedAmount)

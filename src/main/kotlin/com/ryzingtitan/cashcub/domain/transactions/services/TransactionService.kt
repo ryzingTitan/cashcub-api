@@ -4,6 +4,7 @@ import com.ryzingtitan.cashcub.data.transactions.entities.TransactionEntity
 import com.ryzingtitan.cashcub.data.transactions.repositories.TransactionRepository
 import com.ryzingtitan.cashcub.domain.transactions.dtos.Transaction
 import com.ryzingtitan.cashcub.domain.transactions.dtos.TransactionRequest
+import com.ryzingtitan.cashcub.domain.transactions.exceptions.TransactionDoesNotExistException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.slf4j.Logger
@@ -64,6 +65,49 @@ class TransactionService(
             notes = createdTransaction.notes,
             budgetId = createdTransaction.budgetId,
             budgetItemId = createdTransaction.budgetItemId,
+        )
+    }
+
+    @Throws(TransactionDoesNotExistException::class)
+    suspend fun update(
+        transactionId: UUID,
+        budgetItemId: UUID,
+        budgetId: UUID,
+        transactionRequest: TransactionRequest,
+    ): Transaction {
+        val existingTransaction = transactionRepository.findById(transactionId)
+
+        if (existingTransaction == null) {
+            val message = "Transaction does not exist for budget item id $budgetItemId and budget id $budgetId"
+            logger.error(message)
+            throw TransactionDoesNotExistException(message)
+        }
+
+        logger.info("Updating transaction with id $transactionId")
+
+        val updatedTransactionEntity =
+            transactionRepository.save(
+                TransactionEntity(
+                    id = transactionId,
+                    date = transactionRequest.date,
+                    amount = transactionRequest.amount,
+                    transactionType = transactionRequest.transactionType,
+                    merchant = transactionRequest.merchant,
+                    notes = transactionRequest.notes,
+                    budgetId = budgetId,
+                    budgetItemId = budgetItemId,
+                ),
+            )
+
+        return Transaction(
+            id = updatedTransactionEntity.id!!,
+            date = updatedTransactionEntity.date,
+            amount = updatedTransactionEntity.amount,
+            transactionType = updatedTransactionEntity.transactionType,
+            merchant = updatedTransactionEntity.merchant,
+            notes = updatedTransactionEntity.notes,
+            budgetId = updatedTransactionEntity.budgetId,
+            budgetItemId = updatedTransactionEntity.budgetItemId,
         )
     }
 

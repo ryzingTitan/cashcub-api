@@ -25,7 +25,7 @@ class SecurityConfiguration {
                     .authenticated()
                     .pathMatchers(HttpMethod.POST, "/api/budgets/**")
                     .authenticated()
-                    .pathMatchers(HttpMethod.PUT, "/api/budgets/*/items/*")
+                    .pathMatchers(HttpMethod.PUT, "/api/budgets/*/items/**")
                     .authenticated()
                     .pathMatchers(HttpMethod.DELETE, "/api/budgets/*/items/*")
                     .authenticated()

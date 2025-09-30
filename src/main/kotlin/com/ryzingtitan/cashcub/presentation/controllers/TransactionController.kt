@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -85,4 +86,43 @@ class TransactionController(
         @PathVariable budgetItemId: UUID,
         @RequestBody transactionRequest: TransactionRequest,
     ): Transaction = transactionService.create(transactionRequest, budgetId, budgetItemId)
+
+    @PutMapping("/{transactionId}")
+    @Tag(name = "Transactions")
+    @Operation(summary = "Update an existing transaction")
+    @SecurityRequirement(name = "jwt")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Transaction updated successfully",
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Bad Request - Ensure the request contains all required data",
+                content = arrayOf(Content()),
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized - Ensure the authorization token is valid",
+                content = arrayOf(Content()),
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Not Found - Transaction does not exist",
+                content = arrayOf(Content()),
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal Server Error",
+                content = arrayOf(Content()),
+            ),
+        ],
+    )
+    suspend fun updateTransaction(
+        @PathVariable budgetId: UUID,
+        @PathVariable budgetItemId: UUID,
+        @PathVariable transactionId: UUID,
+        @RequestBody transactionRequest: TransactionRequest,
+    ): Transaction = transactionService.update(transactionId, budgetItemId, budgetId, transactionRequest)
 }

@@ -74,8 +74,40 @@ class TransactionControllerStepDefs {
         }
     }
 
+    @When("a transaction with id {string} is updated for budget item {string} and budget {string}:")
+    fun aTransactionWithIdIsUpdatedForBudgetItemAndBudget(
+        transactionId: String,
+        budgetItemId: String,
+        budgetId: String,
+        transactionRequests: List<TransactionRequest>,
+    ) {
+        runBlocking {
+            CommonControllerStepDefs.webClient
+                .put()
+                .uri("/budgets/$budgetId/items/$budgetItemId/transactions/$transactionId")
+                .bodyValue(transactionRequests.first())
+                .accept(MediaType.APPLICATION_JSON)
+                .header(
+                    "Authorization",
+                    "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
+                ).awaitExchange { clientResponse ->
+                    CommonControllerStepDefs.responseStatus = clientResponse.statusCode() as HttpStatus
+
+                    if (clientResponse.statusCode() == HttpStatus.OK) {
+                        val transaction = clientResponse.awaitEntity<Transaction>().body
+
+                        if (transaction != null) {
+                            returnedTransactions.add(transaction)
+                        }
+                    }
+                }
+        }
+    }
+
     @Then("the following transactions are returned:")
     fun theFollowingBudgetItemsAreReturned(expectedTransaction: List<Transaction>) {
+        assertEquals(expectedTransaction.size, returnedTransactions.size)
+
         expectedTransaction.forEachIndexed { index, expectedTransaction ->
             assertEquals(expectedTransaction.date, returnedTransactions[index].date)
             assertEquals(expectedTransaction.amount, returnedTransactions[index].amount)

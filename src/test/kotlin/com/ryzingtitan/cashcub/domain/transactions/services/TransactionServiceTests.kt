@@ -10,12 +10,16 @@ import com.ryzingtitan.cashcub.data.transactions.repositories.TransactionReposit
 import com.ryzingtitan.cashcub.domain.transactions.dtos.Transaction
 import com.ryzingtitan.cashcub.domain.transactions.dtos.TransactionRequest
 import com.ryzingtitan.cashcub.domain.transactions.enums.TransactionType
+import com.ryzingtitan.cashcub.domain.transactions.exceptions.TransactionDoesNotExistException
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.assertThrows
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -76,6 +80,73 @@ class TransactionServiceTests {
                 assertEquals(Level.INFO, appender.list[0].level)
                 assertEquals(
                     "Creating a transaction for budget item id $budgetItemId and budget id $budgetId",
+                    appender.list[0].message,
+                )
+            }
+    }
+
+    @Nested
+    inner class Update {
+        @Test
+        fun `updates an existing transaction`() =
+            runTest {
+                val updatedMerchant = "Updated merchant"
+
+                val transactionRequest =
+                    TransactionRequest(
+                        date = transactionDate,
+                        amount = amount,
+                        transactionType = TransactionType.EXPENSE,
+                        merchant = updatedMerchant,
+                        notes = null,
+                    )
+
+                whenever(mockTransactionRepository.findById(transactionId)).thenReturn(transactionEntity)
+                whenever(
+                    mockTransactionRepository.save(transactionEntity.copy(merchant = updatedMerchant)),
+                ).thenReturn(transactionEntity.copy(merchant = updatedMerchant))
+
+                val transaction = transactionService.update(transactionId, budgetItemId, budgetId, transactionRequest)
+
+                verify(mockTransactionRepository, times(1)).findById(transactionId)
+                verify(mockTransactionRepository, times(1)).save(transactionEntity.copy(merchant = updatedMerchant))
+
+                assertEquals(expectedTransaction.copy(merchant = updatedMerchant), transaction)
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("Updating transaction with id $transactionId", appender.list[0].message)
+            }
+
+        @Test
+        fun `throws 'TransactionDoesNotExistException' when the transaction does not exist`() =
+            runTest {
+                val transactionRequest =
+                    TransactionRequest(
+                        date = transactionDate,
+                        amount = amount,
+                        transactionType = TransactionType.EXPENSE,
+                        merchant = merchant,
+                        notes = null,
+                    )
+
+                whenever(mockTransactionRepository.findById(transactionId)).thenReturn(null)
+
+                val exception =
+                    assertThrows<TransactionDoesNotExistException> {
+                        transactionService.update(transactionId, budgetItemId, budgetId, transactionRequest)
+                    }
+
+                verify(mockTransactionRepository, times(1)).findById(transactionId)
+                verify(mockTransactionRepository, never()).save(any())
+
+                assertEquals(
+                    "Transaction does not exist for budget item id $budgetItemId and budget id $budgetId",
+                    exception.message,
+                )
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.ERROR, appender.list[0].level)
+                assertEquals(
+                    "Transaction does not exist for budget item id $budgetItemId and budget id $budgetId",
                     appender.list[0].message,
                 )
             }

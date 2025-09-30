@@ -29,6 +29,8 @@ class BudgetItemRepositoryStepDefs(
         runBlocking {
             val actualBudgetItems = budgetItemRepository.findAll().toList()
 
+            assertEquals(expectedBudgetItems.size, actualBudgetItems.size)
+
             expectedBudgetItems.forEachIndexed { index, expectedBudgetItem ->
                 assertEquals(expectedBudgetItem.name, actualBudgetItems[index].name)
                 assertEquals(expectedBudgetItem.plannedAmount, actualBudgetItems[index].plannedAmount)

@@ -3,6 +3,7 @@ package com.ryzingtitan.cashcub.presentation.controllers
 import com.ryzingtitan.cashcub.domain.transactions.dtos.Transaction
 import com.ryzingtitan.cashcub.domain.transactions.dtos.TransactionRequest
 import com.ryzingtitan.cashcub.domain.transactions.enums.TransactionType
+import com.ryzingtitan.cashcub.domain.transactions.exceptions.TransactionDoesNotExistException
 import com.ryzingtitan.cashcub.domain.transactions.services.TransactionService
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -76,6 +77,69 @@ class TransactionControllerTests {
             }
     }
 
+    @Nested
+    inner class UpdateTransaction {
+        @Test
+        fun `returns 'OK' status with updated transaction`() =
+            runTest {
+                val transactionRequest =
+                    TransactionRequest(
+                        date = Instant.now(),
+                        amount = amount,
+                        transactionType = TransactionType.EXPENSE,
+                        merchant = merchant,
+                        notes = null,
+                    )
+
+                whenever(mockTransactionService.update(transactionId, budgetItemId, budgetId, transactionRequest))
+                    .thenReturn(transaction)
+
+                webTestClient
+                    .put()
+                    .uri("/api/budgets/$budgetId/items/$budgetItemId/transactions/$transactionId")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .bodyValue(transactionRequest)
+                    .exchange()
+                    .expectStatus()
+                    .isOk
+                    .expectBody<Transaction>()
+                    .isEqualTo(transaction)
+
+                verify(mockTransactionService, times(1))
+                    .update(transactionId, budgetItemId, budgetId, transactionRequest)
+            }
+
+        @Test
+        fun `returns 'NOT FOUND' status when transaction does not exist`() =
+            runTest {
+                val transactionRequest =
+                    TransactionRequest(
+                        date = Instant.now(),
+                        amount = amount,
+                        transactionType = TransactionType.EXPENSE,
+                        merchant = merchant,
+                        notes = null,
+                    )
+
+                whenever(mockTransactionService.update(transactionId, budgetItemId, budgetId, transactionRequest))
+                    .thenThrow(
+                        TransactionDoesNotExistException("Transaction does not exist"),
+                    )
+
+                webTestClient
+                    .put()
+                    .uri("/api/budgets/$budgetId/items/$budgetItemId/transactions/$transactionId")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .bodyValue(transactionRequest)
+                    .exchange()
+                    .expectStatus()
+                    .isNotFound
+
+                verify(mockTransactionService, times(1))
+                    .update(transactionId, budgetItemId, budgetId, transactionRequest)
+            }
+    }
+
     @BeforeEach
     fun setup() {
         val transactionController = TransactionController(mockTransactionService)
@@ -88,11 +152,12 @@ class TransactionControllerTests {
 
     private val budgetId = UUID.randomUUID()
     private val budgetItemId = UUID.randomUUID()
+    private val transactionId = UUID.randomUUID()
     private val merchant = "Test merchant"
     private val amount = BigDecimal("100.25")
     private val transaction =
         Transaction(
-            id = UUID.randomUUID(),
+            id = transactionId,
             date = Instant.now(),
             amount = amount,
             transactionType = TransactionType.EXPENSE,

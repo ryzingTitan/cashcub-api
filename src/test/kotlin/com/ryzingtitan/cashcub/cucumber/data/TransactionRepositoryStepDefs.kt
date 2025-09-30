@@ -30,6 +30,8 @@ class TransactionRepositoryStepDefs(
         runBlocking {
             val actualTransactions = transactionRepository.findAll().toList()
 
+            assertEquals(expectedTransactions.size, actualTransactions.size)
+
             expectedTransactions.forEachIndexed { index, expectedTransaction ->
                 assertEquals(expectedTransaction.date, actualTransactions[index].date)
                 assertEquals(expectedTransaction.amount, actualTransactions[index].amount)

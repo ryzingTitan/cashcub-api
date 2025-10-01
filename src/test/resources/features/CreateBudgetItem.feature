@@ -47,5 +47,7 @@ Feature: Create budget item
     Then the request response status is 'UNAUTHORIZED'
     And the following budget items are returned:
       | name | plannedAmount | budgetId | categoryName |
+    And the following budget items will exist:
+      | name | plannedAmount | budgetId | categoryName |
     And the application will log the following messages:
       | level | message |

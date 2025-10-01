@@ -140,6 +140,23 @@ class TransactionControllerTests {
             }
     }
 
+    @Nested
+    inner class DeleteTransaction {
+        @Test
+        fun `returns 'OK' status`() =
+            runTest {
+                webTestClient
+                    .delete()
+                    .uri("/api/budgets/$budgetId/items/$budgetItemId/transactions/$transactionId")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .exchange()
+                    .expectStatus()
+                    .isOk
+
+                verify(mockTransactionService, times(1)).delete(transactionId, budgetItemId, budgetId)
+            }
+    }
+
     @BeforeEach
     fun setup() {
         val transactionController = TransactionController(mockTransactionService)

@@ -152,6 +152,25 @@ class TransactionServiceTests {
             }
     }
 
+    @Nested
+    inner class Delete {
+        @Test
+        fun `deletes an existing transaction`() =
+            runTest {
+                transactionService.delete(transactionId, budgetItemId, budgetId)
+
+                verify(mockTransactionRepository, times(1)).deleteById(transactionId)
+
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals(
+                    "Deleting transaction with id $transactionId from budget item id $budgetItemId " +
+                        "and budget id $budgetId",
+                    appender.list[0].message,
+                )
+            }
+    }
+
     @BeforeEach
     fun setup() {
         transactionService = TransactionService(mockTransactionRepository)

@@ -104,6 +104,26 @@ class TransactionControllerStepDefs {
         }
     }
 
+    @When("a transaction with id {string} is deleted for budget item {string} and budget {string}")
+    fun aTransactionWithIdIsDeletedForBudgetItemAndBudget(
+        transactionId: String,
+        budgetItemId: String,
+        budgetId: String,
+    ) {
+        runBlocking {
+            CommonControllerStepDefs.webClient
+                .delete()
+                .uri("/budgets/$budgetId/items/$budgetItemId/transactions/$transactionId")
+                .accept(MediaType.APPLICATION_JSON)
+                .header(
+                    "Authorization",
+                    "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
+                ).awaitExchange { clientResponse ->
+                    CommonControllerStepDefs.responseStatus = clientResponse.statusCode() as HttpStatus
+                }
+        }
+    }
+
     @Then("the following transactions are returned:")
     fun theFollowingBudgetItemsAreReturned(expectedTransaction: List<Transaction>) {
         assertEquals(expectedTransaction.size, returnedTransactions.size)

@@ -33,5 +33,7 @@ Feature: Create transaction
     Then the request response status is 'UNAUTHORIZED'
     And the following transactions are returned:
       | date | amount | transactionType | merchant | notes | budgetId | budgetItemId |
+    And the following transactions will exist:
+      | date | amount | transactionType | merchant | notes | budgetId | budgetItemId |
     And the application will log the following messages:
       | level | message |

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import kotlinx.coroutines.flow.Flow
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -125,4 +126,39 @@ class TransactionController(
         @PathVariable transactionId: UUID,
         @RequestBody transactionRequest: TransactionRequest,
     ): Transaction = transactionService.update(transactionId, budgetItemId, budgetId, transactionRequest)
+
+    @DeleteMapping("/{transactionId}")
+    @Tag(name = "Transactions")
+    @Operation(summary = "Delete an existing transaction")
+    @SecurityRequirement(name = "jwt")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Transaction deleted successfully",
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Bad Request - Ensure the request contains all required data",
+                content = arrayOf(Content()),
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized - Ensure the authorization token is valid",
+                content = arrayOf(Content()),
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal Server Error",
+                content = arrayOf(Content()),
+            ),
+        ],
+    )
+    suspend fun deleteTransaction(
+        @PathVariable budgetId: UUID,
+        @PathVariable budgetItemId: UUID,
+        @PathVariable transactionId: UUID,
+    ) {
+        transactionService.delete(transactionId, budgetItemId, budgetId)
+    }
 }

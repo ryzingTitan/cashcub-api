@@ -12,7 +12,6 @@ import org.springframework.web.reactive.function.client.awaitEntityList
 import org.springframework.web.reactive.function.client.awaitExchange
 import java.util.UUID
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class CategoryControllerStepDefs {
     @When("all categories are retrieved")
@@ -43,13 +42,8 @@ class CategoryControllerStepDefs {
     fun theFollowingCategoriesAreReturned(expectedCategories: List<Category>) {
         assertEquals(expectedCategories.size, returnedCategories.size)
 
-        expectedCategories.forEach { expectedCategory ->
-            assertTrue("$expectedCategory does not exist in $returnedCategories") {
-                returnedCategories.any {
-                    it.name ==
-                        expectedCategory.name
-                }
-            }
+        expectedCategories.forEachIndexed { index, expectedCategory ->
+            assertEquals(expectedCategory.name, returnedCategories[index].name)
         }
     }
 

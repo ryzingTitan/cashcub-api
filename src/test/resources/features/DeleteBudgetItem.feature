@@ -36,5 +36,9 @@ Feature: Delete budget item
     Given the user has an invalid authorization token
     When a budget item with id 'ef91a488-e596-44cc-ac02-5fd2b166f8c6' is deleted for budget '8fca0def-5086-4cae-af5e-11a217288806'
     Then the request response status is 'UNAUTHORIZED'
+    And the following budget items will exist:
+      | name            | plannedAmount | budgetId                             | categoryName   |
+      | Car Maintenance | 100.7500      | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |
+      | Groceries       | 200.0000      | 8fca0def-5086-4cae-af5e-11a217288806 | Food           |
     And the application will log the following messages:
       | level | message |

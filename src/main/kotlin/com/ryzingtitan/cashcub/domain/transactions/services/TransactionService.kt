@@ -111,5 +111,16 @@ class TransactionService(
         )
     }
 
+    suspend fun delete(
+        transactionId: UUID,
+        budgetItemId: UUID,
+        budgetId: UUID,
+    ) {
+        logger.info(
+            "Deleting transaction with id $transactionId from budget item id $budgetItemId and budget id $budgetId",
+        )
+        transactionRepository.deleteById(transactionId)
+    }
+
     private val logger: Logger = LoggerFactory.getLogger(TransactionService::class.java)
 }

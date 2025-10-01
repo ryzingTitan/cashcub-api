@@ -16,8 +16,8 @@ Feature: Update budget item
       | Car Maintenance | 250           | Transportation |
     Then the request response status is 'OK'
     And the following budget items are returned:
-      | name            | plannedAmount | budgetId                             | categoryName   |
-      | Car Maintenance | 250           | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |
+      | name            | plannedAmount | actualAmount | budgetId                             | categoryName   |
+      | Car Maintenance | 250           | 0.00         | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |
     And the following budget items will exist:
       | name            | plannedAmount | budgetId                             | categoryName   |
       | Car Maintenance | 250.0000      | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |
@@ -33,7 +33,7 @@ Feature: Update budget item
       | Car Maintenance | 250           | Transportation |
     Then the request response status is 'NOT_FOUND'
     And the following budget items are returned:
-      | name | plannedAmount | budgetId | categoryName |
+      | name | plannedAmount | actualAmount | budgetId | categoryName |
     And the following budget items will exist:
       | name            | plannedAmount | budgetId                             | categoryName   |
       | Car Maintenance | 100.7500      | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |
@@ -49,7 +49,7 @@ Feature: Update budget item
       | Car Maintenance | 250           | Transportation |
     Then the request response status is 'UNAUTHORIZED'
     And the following budget items are returned:
-      | name | plannedAmount | budgetId | categoryName |
+      | name | plannedAmount | actualAmount | budgetId | categoryName |
     And the following budget items will exist:
       | name            | plannedAmount | budgetId                             | categoryName   |
       | Car Maintenance | 100.7500      | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |

@@ -126,6 +126,7 @@ class BudgetItemControllerStepDefs(
         expectedBudgetItems.forEachIndexed { index, expectedBudgetItem ->
             assertEquals(expectedBudgetItem.name, returnedBudgetItems[index].name)
             assertEquals(expectedBudgetItem.plannedAmount, returnedBudgetItems[index].plannedAmount)
+            assertEquals(expectedBudgetItem.actualAmount, returnedBudgetItems[index].actualAmount)
             assertEquals(expectedBudgetItem.budgetId, returnedBudgetItems[index].budgetId)
             assertEquals(expectedBudgetItem.categoryId, returnedBudgetItems[index].categoryId)
         }
@@ -143,6 +144,7 @@ class BudgetItemControllerStepDefs(
             id = UUID.randomUUID(),
             name = tableRow["name"].toString(),
             plannedAmount = tableRow["plannedAmount"]!!.toBigDecimal(),
+            actualAmount = tableRow["actualAmount"]!!.toBigDecimal(),
             budgetId = UUID.fromString(tableRow["budgetId"]),
             categoryId = categoryId,
         )

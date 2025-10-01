@@ -245,6 +245,7 @@ class BudgetItemServiceTests {
             id = budgetItemId,
             name = name,
             plannedAmount = plannedAmount,
+            actualAmount = BigDecimal("0.00"),
             budgetId = budgetId,
             categoryId = categoryId,
         )

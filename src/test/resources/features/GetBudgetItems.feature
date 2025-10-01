@@ -16,9 +16,9 @@ Feature: Get budget items for a budget
     When all budget items are retrieved for budget '8fca0def-5086-4cae-af5e-11a217288806'
     Then the request response status is 'OK'
     And the following budget items are returned:
-      | name            | plannedAmount | budgetId                             | categoryName   |
-      | Car Maintenance | 100.75        | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |
-      | Groceries       | 200.00        | 8fca0def-5086-4cae-af5e-11a217288806 | Food           |
+      | name            | plannedAmount | actualAmount | budgetId                             | categoryName   |
+      | Car Maintenance | 100.75        | 0.00         | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |
+      | Groceries       | 200.00        | 0.00         | 8fca0def-5086-4cae-af5e-11a217288806 | Food           |
     And the application will log the following messages:
       | level | message                                                                        |
       | INFO  | Retrieving all budget items for budget id 8fca0def-5086-4cae-af5e-11a217288806 |
@@ -27,7 +27,7 @@ Feature: Get budget items for a budget
     Given the user has an invalid authorization token
     When all budget items are retrieved for budget '8fca0def-5086-4cae-af5e-11a217288806'
     Then the request response status is 'UNAUTHORIZED'
-    And the following budgets are returned:
-      | month | year |
+    And the following budget items are returned:
+      | name | plannedAmount | actualAmount | budgetId | categoryName |
     And the application will log the following messages:
       | level | message |

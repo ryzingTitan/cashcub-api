@@ -7,6 +7,7 @@ data class BudgetItem(
     val id: UUID,
     val name: String,
     val plannedAmount: BigDecimal,
+    val actualAmount: BigDecimal,
     val budgetId: UUID,
     val categoryId: UUID,
 )

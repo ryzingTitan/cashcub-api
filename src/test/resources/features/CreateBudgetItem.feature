@@ -12,8 +12,8 @@ Feature: Create budget item
       | Car Maintenance | 100.75        | Transportation |
     Then the request response status is 'CREATED'
     And the following budget items are returned:
-      | name            | plannedAmount | budgetId                             | categoryName   |
-      | Car Maintenance | 100.75        | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |
+      | name            | plannedAmount | actualAmount | budgetId                             | categoryName   |
+      | Car Maintenance | 100.75        | 0.00         | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |
     And the following budget items will exist:
       | name            | plannedAmount | budgetId                             | categoryName   |
       | Car Maintenance | 100.7500      | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |
@@ -31,7 +31,7 @@ Feature: Create budget item
       | Car Maintenance | 100.75        | Transportation |
     Then the request response status is 'CONFLICT'
     And the following budget items are returned:
-      | name | plannedAmount | budgetId | categoryName |
+      | name | plannedAmount | actualAmount | budgetId | categoryName |
     And the following budget items will exist:
       | name            | plannedAmount | budgetId                             | categoryName   |
       | Car Maintenance | 100.7500      | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |
@@ -46,7 +46,7 @@ Feature: Create budget item
       | Car Maintenance | 100.75        | Transportation |
     Then the request response status is 'UNAUTHORIZED'
     And the following budget items are returned:
-      | name | plannedAmount | budgetId | categoryName |
+      | name | plannedAmount | actualAmount | budgetId | categoryName |
     And the following budget items will exist:
       | name | plannedAmount | budgetId | categoryName |
     And the application will log the following messages:

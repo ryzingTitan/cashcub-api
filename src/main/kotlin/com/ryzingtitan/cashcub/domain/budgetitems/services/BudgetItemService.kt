@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.map
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
 import java.util.UUID
 
 @Service
@@ -25,6 +26,7 @@ class BudgetItemService(
                 id = it.id!!,
                 name = it.name,
                 plannedAmount = it.plannedAmount.setScale(2),
+                actualAmount = BigDecimal("0.00"),
                 budgetId = it.budgetId,
                 categoryId = it.categoryId,
             )
@@ -62,6 +64,7 @@ class BudgetItemService(
             id = createdBudgetItem.id!!,
             name = createdBudgetItem.name,
             plannedAmount = createdBudgetItem.plannedAmount.setScale(2),
+            actualAmount = BigDecimal("0.00"),
             budgetId = createdBudgetItem.budgetId,
             categoryId = createdBudgetItem.categoryId,
         )
@@ -98,6 +101,7 @@ class BudgetItemService(
             id = updatedBudgetItemEntity.id!!,
             name = updatedBudgetItemEntity.name,
             plannedAmount = updatedBudgetItemEntity.plannedAmount,
+            actualAmount = BigDecimal("0.00"),
             budgetId = updatedBudgetItemEntity.budgetId,
             categoryId = updatedBudgetItemEntity.categoryId,
         )

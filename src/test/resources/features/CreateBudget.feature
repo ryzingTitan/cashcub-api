@@ -36,5 +36,7 @@ Feature: Create budget
     Then the request response status is 'UNAUTHORIZED'
     And the following budgets are returned:
       | month | year |
+    And the following budgets will exist:
+      | budgetMonth | budgetYear |
     And the application will log the following messages:
       | level | message |

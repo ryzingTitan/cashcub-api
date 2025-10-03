@@ -2,7 +2,7 @@ package com.ryzingtitan.cashcub.cucumber.controllers
 
 import com.ryzingtitan.cashcub.cucumber.common.CommonControllerStepDefs
 import com.ryzingtitan.cashcub.domain.budgets.dtos.Budget
-import com.ryzingtitan.cashcub.domain.budgets.dtos.CreateBudgetRequest
+import com.ryzingtitan.cashcub.domain.budgets.dtos.BudgetRequest
 import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
@@ -49,7 +49,7 @@ class BudgetControllerStepDefs {
             CommonControllerStepDefs.webClient
                 .post()
                 .uri("/budgets")
-                .bodyValue(CreateBudgetRequest(month = month, year = year))
+                .bodyValue(BudgetRequest(month = month, year = year))
                 .accept(MediaType.APPLICATION_JSON)
                 .header(
                     "Authorization",

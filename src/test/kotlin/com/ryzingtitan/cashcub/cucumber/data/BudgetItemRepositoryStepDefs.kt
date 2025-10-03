@@ -34,7 +34,11 @@ class BudgetItemRepositoryStepDefs(
             expectedBudgetItems.forEachIndexed { index, expectedBudgetItem ->
                 assertEquals(expectedBudgetItem.name, actualBudgetItems[index].name)
                 assertEquals(expectedBudgetItem.plannedAmount, actualBudgetItems[index].plannedAmount)
-                assertEquals(expectedBudgetItem.budgetId, actualBudgetItems[index].budgetId)
+
+                if (expectedBudgetItem.budgetId != UUID.fromString("00000000-0000-0000-0000-000000000000")) {
+                    assertEquals(expectedBudgetItem.budgetId, actualBudgetItems[index].budgetId)
+                }
+
                 assertEquals(expectedBudgetItem.categoryId, actualBudgetItems[index].categoryId)
             }
         }

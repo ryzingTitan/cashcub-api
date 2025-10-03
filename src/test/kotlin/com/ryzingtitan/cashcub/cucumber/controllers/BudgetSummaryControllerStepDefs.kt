@@ -2,6 +2,7 @@ package com.ryzingtitan.cashcub.cucumber.controllers
 
 import com.ryzingtitan.cashcub.cucumber.common.CommonControllerStepDefs
 import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItem
+import com.ryzingtitan.cashcub.domain.budgets.dtos.BudgetRequest
 import com.ryzingtitan.cashcub.domain.budgets.dtos.BudgetSummary
 import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Then
@@ -39,6 +40,35 @@ class BudgetSummaryControllerStepDefs {
         }
     }
 
+    @When("a budget with id {string} is cloned for month {int} and year {int}")
+    fun aBudgetWithIdIsCloneForMonthAndYear(
+        budgetId: String,
+        month: Int,
+        year: Int,
+    ) {
+        runBlocking {
+            CommonControllerStepDefs.webClient
+                .post()
+                .uri("/budgets/$budgetId/clone")
+                .bodyValue(BudgetRequest(month = month, year = year))
+                .accept(MediaType.APPLICATION_JSON)
+                .header(
+                    "Authorization",
+                    "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
+                ).awaitExchange { clientResponse ->
+                    CommonControllerStepDefs.responseStatus = clientResponse.statusCode() as HttpStatus
+
+                    if (clientResponse.statusCode() == HttpStatus.CREATED) {
+                        val budgetSummary = clientResponse.awaitEntity<BudgetSummary>().body
+
+                        if (budgetSummary != null) {
+                            returnedBudgetSummaries.add(budgetSummary)
+                        }
+                    }
+                }
+        }
+    }
+
     @Then("the following budget summaries are returned:")
     fun theFollowingBudgetSummariesAreReturned(expectedBudgetSummaries: List<BudgetSummary>) {
         assertEquals(expectedBudgetSummaries.size, returnedBudgetSummaries.size)
@@ -62,7 +92,11 @@ class BudgetSummaryControllerStepDefs {
             assertEquals(expectedBudgetItem.name, returnedBudgetItems[index].name)
             assertEquals(expectedBudgetItem.plannedAmount, returnedBudgetItems[index].plannedAmount)
             assertEquals(expectedBudgetItem.actualAmount, returnedBudgetItems[index].actualAmount)
-            assertEquals(expectedBudgetItem.budgetId, returnedBudgetItems[index].budgetId)
+
+            if (expectedBudgetItem.budgetId != UUID.fromString("00000000-0000-0000-0000-000000000000")) {
+                assertEquals(expectedBudgetItem.budgetId, returnedBudgetItems[index].budgetId)
+            }
+
             assertEquals(expectedBudgetItem.categoryId, returnedBudgetItems[index].categoryId)
         }
     }

@@ -2,6 +2,7 @@ package com.ryzingtitan.cashcub.domain.budgetitems.services
 
 import com.ryzingtitan.cashcub.data.budgetitems.entities.BudgetItemEntity
 import com.ryzingtitan.cashcub.data.budgetitems.repositories.BudgetItemRepository
+import com.ryzingtitan.cashcub.data.transactions.repositories.TransactionRepository
 import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItem
 import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItemRequest
 import com.ryzingtitan.cashcub.domain.budgetitems.exceptions.BudgetItemDoesNotExistException
@@ -17,6 +18,7 @@ import java.util.UUID
 @Service
 class BudgetItemService(
     private val budgetItemRepository: BudgetItemRepository,
+    private val transactionRepository: TransactionRepository,
 ) {
     suspend fun getAllByBudgetId(budgetId: UUID): Flow<BudgetItem> {
         logger.info("Retrieving all budget items for budget id $budgetId")
@@ -112,6 +114,7 @@ class BudgetItemService(
         budgetId: UUID,
     ) {
         logger.info("Deleting budget item with id $budgetItemId from budget id $budgetId")
+        transactionRepository.deleteAllByBudgetItemId(budgetItemId)
         budgetItemRepository.deleteById(budgetItemId)
     }
 

@@ -10,4 +10,6 @@ interface TransactionRepository : CoroutineCrudRepository<TransactionEntity, UUI
         budgetItemId: UUID,
         budgetId: UUID,
     ): Flow<TransactionEntity>
+
+    suspend fun deleteAllByBudgetItemId(budgetItemId: UUID)
 }

@@ -7,6 +7,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.cashcub.data.budgetitems.entities.BudgetItemEntity
 import com.ryzingtitan.cashcub.data.budgetitems.repositories.BudgetItemRepository
+import com.ryzingtitan.cashcub.data.transactions.repositories.TransactionRepository
 import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItem
 import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItemRequest
 import com.ryzingtitan.cashcub.domain.budgetitems.exceptions.BudgetItemDoesNotExistException
@@ -197,6 +198,7 @@ class BudgetItemServiceTests {
             runTest {
                 budgetItemService.delete(budgetItemId, budgetId)
 
+                verify(mockTransactionRepository, times(1)).deleteAllByBudgetItemId(budgetItemId)
                 verify(mockBudgetItemRepository, times(1)).deleteById(budgetItemId)
 
                 assertEquals(1, appender.list.size)
@@ -210,7 +212,7 @@ class BudgetItemServiceTests {
 
     @BeforeEach
     fun setup() {
-        budgetItemService = BudgetItemService(mockBudgetItemRepository)
+        budgetItemService = BudgetItemService(mockBudgetItemRepository, mockTransactionRepository)
 
         logger = LoggerFactory.getLogger(BudgetItemService::class.java) as Logger
         appender = ListAppender()
@@ -224,6 +226,7 @@ class BudgetItemServiceTests {
     private lateinit var appender: ListAppender<ILoggingEvent>
 
     private val mockBudgetItemRepository = mock<BudgetItemRepository>()
+    private val mockTransactionRepository = mock<TransactionRepository>()
 
     private val budgetId = UUID.randomUUID()
     private val budgetItemId = UUID.randomUUID()

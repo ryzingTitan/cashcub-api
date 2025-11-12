@@ -5,16 +5,16 @@ import org.gradle.kotlin.dsl.withType
 plugins {
     kotlin("jvm") version "2.0.21"
     kotlin("plugin.spring") version "2.0.21"
-    id("org.springframework.boot") version "3.5.6"
+    id("org.springframework.boot") version "3.5.7"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
+    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
     id("io.gitlab.arturbosch.detekt") version "1.23.8"
     id("com.github.ben-manes.versions") version "0.53.0"
     jacoco
 }
 
 group = "com.ryzingtitan"
-version = "1.0.0"
+version = "1.2.0"
 
 java {
     toolchain {
@@ -38,7 +38,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("org.liquibase:liquibase-core")
-    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.13")
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.14")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("org.postgresql:r2dbc-postgresql")

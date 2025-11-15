@@ -2,7 +2,6 @@ package com.ryzingtitan.cashcub.cucumber.controllers
 
 import com.ryzingtitan.cashcub.cucumber.common.CommonControllerStepDefs
 import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItem
-import com.ryzingtitan.cashcub.domain.budgets.dtos.BudgetRequest
 import com.ryzingtitan.cashcub.domain.budgets.dtos.BudgetSummary
 import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Then
@@ -40,35 +39,6 @@ class BudgetSummaryControllerStepDefs {
         }
     }
 
-    @When("a budget with id {string} is cloned for month {int} and year {int}")
-    fun aBudgetWithIdIsCloneForMonthAndYear(
-        budgetId: String,
-        month: Int,
-        year: Int,
-    ) {
-        runBlocking {
-            CommonControllerStepDefs.webClient
-                .post()
-                .uri("/budgets/$budgetId/clone")
-                .bodyValue(BudgetRequest(month = month, year = year))
-                .accept(MediaType.APPLICATION_JSON)
-                .header(
-                    "Authorization",
-                    "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
-                ).awaitExchange { clientResponse ->
-                    CommonControllerStepDefs.responseStatus = clientResponse.statusCode() as HttpStatus
-
-                    if (clientResponse.statusCode() == HttpStatus.CREATED) {
-                        val budgetSummary = clientResponse.awaitEntity<BudgetSummary>().body
-
-                        if (budgetSummary != null) {
-                            returnedBudgetSummaries.add(budgetSummary)
-                        }
-                    }
-                }
-        }
-    }
-
     @Then("the following budget summaries are returned:")
     fun theFollowingBudgetSummariesAreReturned(expectedBudgetSummaries: List<BudgetSummary>) {
         assertEquals(expectedBudgetSummaries.size, returnedBudgetSummaries.size)
@@ -83,11 +53,21 @@ class BudgetSummaryControllerStepDefs {
         }
     }
 
-    @Then("the following budget items are returned in the summary:")
-    fun theFollowingBudgetItemsAreReturnedInTheSummary(expectedBudgetItems: List<BudgetItem>) {
-        assertEquals(expectedBudgetItems.size, returnedBudgetSummaries.first().budgetItems.size)
+    @Then("the following budget items are returned in the summary for budget {string}:")
+    fun theFollowingBudgetItemsAreReturnedInTheSummary(
+        budgetId: String,
+        expectedBudgetItems: List<BudgetItem>,
+    ) {
+        val returnedBudgetSummary =
+            if (budgetId == "00000000-0000-0000-0000-000000000000") {
+                returnedBudgetSummaries.first()
+            } else {
+                returnedBudgetSummaries.find { it.id == UUID.fromString(budgetId) }
+            }
 
-        val returnedBudgetItems = returnedBudgetSummaries.first().budgetItems
+        assertEquals(expectedBudgetItems.size, returnedBudgetSummary?.budgetItems?.size)
+
+        val returnedBudgetItems = returnedBudgetSummary!!.budgetItems
         expectedBudgetItems.forEachIndexed { index, expectedBudgetItem ->
             assertEquals(expectedBudgetItem.name, returnedBudgetItems[index].name)
             assertEquals(expectedBudgetItem.plannedAmount, returnedBudgetItems[index].plannedAmount)
@@ -114,5 +94,7 @@ class BudgetSummaryControllerStepDefs {
             budgetItems = emptyList(),
         )
 
-    private val returnedBudgetSummaries = mutableListOf<BudgetSummary>()
+    companion object {
+        val returnedBudgetSummaries = mutableListOf<BudgetSummary>()
+    }
 }

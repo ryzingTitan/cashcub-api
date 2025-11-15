@@ -52,6 +52,27 @@ class BudgetServiceTests {
     }
 
     @Nested
+    inner class GetAllForRange {
+        @Test
+        fun `returns all budgets for date range`() =
+            runTest {
+                whenever(
+                    mockBudgetRepository.findAllByBudgetMonthBetweenAndBudgetYearBetween(9, 10, 2025, 2025),
+                ).thenReturn(flowOf(firstBudgetEntity, secondBudgetEntity))
+
+                val budgets = budgetService.getAllForRange("9-2025", "10-2025")
+
+                verify(mockBudgetRepository, times(1))
+                    .findAllByBudgetMonthBetweenAndBudgetYearBetween(9, 10, 2025, 2025)
+
+                assertEquals(listOf(firstBudget, secondBudget), budgets.toList())
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("Retrieving all budgets from 9-2025 to 10-2025", appender.list[0].message)
+            }
+    }
+
+    @Nested
     inner class Create {
         @Test
         fun `creates a new budget`() =

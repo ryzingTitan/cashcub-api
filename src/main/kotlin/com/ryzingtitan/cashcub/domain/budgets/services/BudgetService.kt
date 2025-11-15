@@ -34,6 +34,28 @@ class BudgetService(
         }
     }
 
+    suspend fun getAllForRange(
+        startDate: String,
+        endDate: String,
+    ): Flow<Budget> {
+        logger.info("Retrieving all budgets from $startDate to $endDate")
+
+        val startMonth = startDate.split("-")[0].toInt()
+        val startYear = startDate.split("-")[1].toInt()
+        val endMonth = endDate.split("-")[0].toInt()
+        val endYear = endDate.split("-")[1].toInt()
+
+        return budgetRepository
+            .findAllByBudgetMonthBetweenAndBudgetYearBetween(startMonth, endMonth, startYear, endYear)
+            .map {
+                Budget(
+                    id = it.id!!,
+                    month = it.budgetMonth,
+                    year = it.budgetYear,
+                )
+            }
+    }
+
     @Throws(DuplicateBudgetException::class)
     suspend fun create(budgetRequest: BudgetRequest): Budget {
         val existingBudget =

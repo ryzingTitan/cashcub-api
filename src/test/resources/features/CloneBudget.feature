@@ -16,7 +16,7 @@ Feature: Clone an existing budget
     And the following budget summaries are returned:
       | month | year | expectedIncome | actualIncome | expectedExpenses | actualExpenses |
       | 10    | 2025 | 0.00           | 0.00         | 300.75           | 0.00           |
-    And the following budget items are returned in the summary:
+    And the following budget items are returned in the summary for budget '00000000-0000-0000-0000-000000000000':
       | name            | plannedAmount | actualAmount | budgetId                             | categoryName   |
       | Car Maintenance | 100.75        | 0.00         | 00000000-0000-0000-0000-000000000000 | Transportation |
       | Groceries       | 200.00        | 0.00         | 00000000-0000-0000-0000-000000000000 | Food           |

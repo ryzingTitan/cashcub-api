@@ -1,6 +1,7 @@
 package com.ryzingtitan.cashcub.cucumber.common
 
 import com.nimbusds.jwt.SignedJWT
+import com.ryzingtitan.cashcub.cucumber.controllers.BudgetSummaryControllerStepDefs.Companion.returnedBudgetSummaries
 import com.ryzingtitan.cashcub.data.budgetitems.repositories.BudgetItemRepository
 import com.ryzingtitan.cashcub.data.budgets.repositories.BudgetRepository
 import com.ryzingtitan.cashcub.data.transactions.repositories.TransactionRepository
@@ -49,6 +50,7 @@ class CommonControllerStepDefs(
     @After
     fun teardown() {
         mockOAuth2Server.shutdown()
+        returnedBudgetSummaries.clear()
 
         runBlocking {
             transactionRepository.deleteAll()

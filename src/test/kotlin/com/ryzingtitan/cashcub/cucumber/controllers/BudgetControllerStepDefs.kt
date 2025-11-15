@@ -1,8 +1,10 @@
 package com.ryzingtitan.cashcub.cucumber.controllers
 
 import com.ryzingtitan.cashcub.cucumber.common.CommonControllerStepDefs
+import com.ryzingtitan.cashcub.cucumber.controllers.BudgetSummaryControllerStepDefs.Companion.returnedBudgetSummaries
 import com.ryzingtitan.cashcub.domain.budgets.dtos.Budget
 import com.ryzingtitan.cashcub.domain.budgets.dtos.BudgetRequest
+import com.ryzingtitan.cashcub.domain.budgets.dtos.BudgetSummary
 import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
@@ -62,6 +64,35 @@ class BudgetControllerStepDefs {
 
                         if (budget != null) {
                             returnedBudgets.add(budget)
+                        }
+                    }
+                }
+        }
+    }
+
+    @When("a budget with id {string} is cloned for month {int} and year {int}")
+    fun aBudgetWithIdIsCloneForMonthAndYear(
+        budgetId: String,
+        month: Int,
+        year: Int,
+    ) {
+        runBlocking {
+            CommonControllerStepDefs.webClient
+                .post()
+                .uri("/budgets/$budgetId/clone")
+                .bodyValue(BudgetRequest(month = month, year = year))
+                .accept(MediaType.APPLICATION_JSON)
+                .header(
+                    "Authorization",
+                    "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
+                ).awaitExchange { clientResponse ->
+                    CommonControllerStepDefs.responseStatus = clientResponse.statusCode() as HttpStatus
+
+                    if (clientResponse.statusCode() == HttpStatus.CREATED) {
+                        val budgetSummary = clientResponse.awaitEntity<BudgetSummary>().body
+
+                        if (budgetSummary != null) {
+                            returnedBudgetSummaries.add(budgetSummary)
                         }
                     }
                 }

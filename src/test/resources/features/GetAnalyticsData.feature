@@ -1,4 +1,4 @@
-Feature: Get a budget summary
+Feature: Get budget summaries for analytics
 
   Background:
     Given the following budgets exist:
@@ -19,9 +19,9 @@ Feature: Get a budget summary
       | 2025-09-28T05:47:26.853Z | 45.50   | EXPENSE         | Martins   |             | 8a23ba21-eb0d-4751-b531-9e46a979009f | 8fca0def-5086-4cae-af5e-11a217288806 |
       | 2025-09-30T05:47:26.853Z | 1200.00 | INCOME          |           |             | b7617450-7ce6-4810-97ea-6caea9f9e8e5 | 8fca0def-5086-4cae-af5e-11a217288806 |
 
-  Scenario: Get budget summary
+  Scenario: Get budget summaries for a single month
     Given the user has a valid authorization token
-    When a budget summary is retrieved for budget id '8fca0def-5086-4cae-af5e-11a217288806'
+    When analytics data is retrieved for date range from '9-2025' to '9-2025'
     Then the request response status is 'OK'
     And the following budget summaries are returned:
       | month | year | expectedIncome | actualIncome | expectedExpenses | actualExpenses |
@@ -34,22 +34,35 @@ Feature: Get a budget summary
       | Second Paycheck | 1200.00       | 0.00         | 8fca0def-5086-4cae-af5e-11a217288806 | Income         |
     And the application will log the following messages:
       | level | message                                                                      |
+      | INFO  | Retrieving all budgets from 9-2025 to 9-2025                                 |
       | INFO  | Retrieving budget summary for budget id 8fca0def-5086-4cae-af5e-11a217288806 |
 
-  Scenario: Do not return budget data when budget does not exist
+  Scenario: Get budget summaries for a multiple months
     Given the user has a valid authorization token
-    When a budget summary is retrieved for budget id 'f88fa462-1ab0-444b-96b9-c19fdf0e13a2'
-    Then the request response status is 'NOT_FOUND'
+    When analytics data is retrieved for date range from '9-2025' to '10-2025'
+    Then the request response status is 'OK'
     And the following budget summaries are returned:
       | month | year | expectedIncome | actualIncome | expectedExpenses | actualExpenses |
+      | 9     | 2025 | 2400.00        | 1200.00      | 300.75           | 111.75         |
+      | 10    | 2025 | 1200.00        | 0.00         | 0.00             | 0.00           |
+    And the following budget items are returned in the summary for budget '8fca0def-5086-4cae-af5e-11a217288806':
+      | name            | plannedAmount | actualAmount | budgetId                             | categoryName   |
+      | Car Maintenance | 100.75        | 66.25        | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |
+      | Groceries       | 200.00        | 45.50        | 8fca0def-5086-4cae-af5e-11a217288806 | Food           |
+      | First Paycheck  | 1200.00       | 1200.00      | 8fca0def-5086-4cae-af5e-11a217288806 | Income         |
+      | Second Paycheck | 1200.00       | 0.00         | 8fca0def-5086-4cae-af5e-11a217288806 | Income         |
+    And the following budget items are returned in the summary for budget 'd6c4b213-c67f-4fac-8965-a696a6308fc1':
+      | name            | plannedAmount | actualAmount | budgetId                             | categoryName |
+      | Second Paycheck | 1200.00       | 0.00         | d6c4b213-c67f-4fac-8965-a696a6308fc1 | Income       |
     And the application will log the following messages:
       | level | message                                                                      |
-      | INFO  | Retrieving budget summary for budget id f88fa462-1ab0-444b-96b9-c19fdf0e13a2 |
-      | ERROR | Budget with id f88fa462-1ab0-444b-96b9-c19fdf0e13a2 does not exist           |
+      | INFO  | Retrieving all budgets from 9-2025 to 10-2025                                |
+      | INFO  | Retrieving budget summary for budget id 8fca0def-5086-4cae-af5e-11a217288806 |
+      | INFO  | Retrieving budget summary for budget id d6c4b213-c67f-4fac-8965-a696a6308fc1 |
 
-  Scenario: Budget data cannot be retrieved with an invalid authorization token
+  Scenario: Analytics data cannot be retrieved with an invalid authorization token
     Given the user has an invalid authorization token
-    When a budget summary is retrieved for budget id '8fca0def-5086-4cae-af5e-11a217288806'
+    When analytics data is retrieved for date range from '9-2025' to '10-2025'
     Then the request response status is 'UNAUTHORIZED'
     And the following budget summaries are returned:
       | month | year | expectedIncome | actualIncome | expectedExpenses | actualExpenses |

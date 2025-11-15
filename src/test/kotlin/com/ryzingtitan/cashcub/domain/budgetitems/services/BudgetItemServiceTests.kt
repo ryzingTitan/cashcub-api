@@ -12,8 +12,6 @@ import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItem
 import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItemRequest
 import com.ryzingtitan.cashcub.domain.budgetitems.exceptions.BudgetItemDoesNotExistException
 import com.ryzingtitan.cashcub.domain.budgetitems.exceptions.DuplicateBudgetItemException
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -32,24 +30,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class BudgetItemServiceTests {
-    @Nested
-    inner class GetAllByBudgetId {
-        @Test
-        fun `returns all budget items for a budget`() =
-            runTest {
-                whenever(mockBudgetItemRepository.findAllByBudgetId(budgetId)).thenReturn(flowOf(budgetItemEntity))
-
-                val budgetItems = budgetItemService.getAllByBudgetId(budgetId)
-
-                verify(mockBudgetItemRepository, times(1)).findAllByBudgetId(budgetId)
-
-                assertEquals(listOf(expectedBudgetItem), budgetItems.toList())
-                assertEquals(1, appender.list.size)
-                assertEquals(Level.INFO, appender.list[0].level)
-                assertEquals("Retrieving all budget items for budget id $budgetId", appender.list[0].message)
-            }
-    }
-
     @Nested
     inner class Create {
         @Test

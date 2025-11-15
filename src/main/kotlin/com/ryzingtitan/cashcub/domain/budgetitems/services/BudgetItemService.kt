@@ -7,8 +7,6 @@ import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItem
 import com.ryzingtitan.cashcub.domain.budgetitems.dtos.BudgetItemRequest
 import com.ryzingtitan.cashcub.domain.budgetitems.exceptions.BudgetItemDoesNotExistException
 import com.ryzingtitan.cashcub.domain.budgetitems.exceptions.DuplicateBudgetItemException
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -20,21 +18,6 @@ class BudgetItemService(
     private val budgetItemRepository: BudgetItemRepository,
     private val transactionRepository: TransactionRepository,
 ) {
-    suspend fun getAllByBudgetId(budgetId: UUID): Flow<BudgetItem> {
-        logger.info("Retrieving all budget items for budget id $budgetId")
-
-        return budgetItemRepository.findAllByBudgetId(budgetId).map {
-            BudgetItem(
-                id = it.id!!,
-                name = it.name,
-                plannedAmount = it.plannedAmount.setScale(2),
-                actualAmount = BigDecimal("0.00"),
-                budgetId = it.budgetId,
-                categoryId = it.categoryId,
-            )
-        }
-    }
-
     @Throws(DuplicateBudgetItemException::class)
     suspend fun create(
         budgetItemRequest: BudgetItemRequest,

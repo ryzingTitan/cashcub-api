@@ -1,5 +1,9 @@
 name: Build and Push Docker Image to GitHub Packages
 
+permissions:
+  contents: write
+  packages: write
+
 on:
   push:
     branches:

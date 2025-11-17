@@ -14,9 +14,6 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
-    env:
-      IMAGE_NAME: ${{ toLower(github.repository) }}
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -66,6 +63,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and Push Docker Image to GHCR
         run: |
+          echo "REPO=${GITHUB_REPOSITORY,,}" >> ${IMAGE_NAME}
           IMAGE_FULL_TAG="ghcr.io/${{ env.IMAGE_NAME }}:v${{ env.PROJECT_VERSION }}"
           
           echo "Building image with tag: $IMAGE_FULL_TAG"

@@ -33,7 +33,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: 🏷️ Extract Version from Gradle file
+      - name: Extract Version from Gradle file
         id: get_version
         run: |
           # Use awk to find the line starting with 'version =', extract the third field (the version string),
@@ -42,7 +42,6 @@ jobs:
           echo "Extracted project version: $VERSION"
           # Export the version as an environment variable for subsequent steps
           echo "PROJECT_VERSION=$VERSION" >> $GITHUB_ENV
-
       - name: Create Git Tag (if it doesn't exist)
         id: tag_release
         run: |
@@ -67,7 +66,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build and Push Docker Image to GHCR
         run: |
           IMAGE_FULL_TAG="ghcr.io/${{ env.IMAGE_NAME }}:v${{ env.PROJECT_VERSION }}"
@@ -76,9 +74,4 @@ jobs:
           
           # Executes the Spring Boot build command and pushes the image
           ./gradlew bootBuildImage \
-          --imageName "$IMAGE_FULL_TAG" \
-          --publish
-
-      - name: Display Image Name (For Verification)
-        run: |
-          echo "Image built and pushed to: ghcr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}"
+          --imageName "$IMAGE_FULL_TAG"

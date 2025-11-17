@@ -70,4 +70,5 @@ jobs:
           
           # Executes the Spring Boot build command and pushes the image
           ./gradlew bootBuildImage \
-          --imageName "$IMAGE_FULL_TAG"
+          --imageName "$IMAGE_FULL_TAG" \
+          --publishImage

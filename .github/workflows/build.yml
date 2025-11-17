@@ -64,7 +64,7 @@ jobs:
       - name: Build and Push Docker Image to GHCR
         run: |
           IMAGE_REPO_PATH=${GITHUB_REPOSITORY,,}
-          IMAGE_FULL_TAG="ghcr.io/${IMAGE_REPO_PATH}:v${{ env.PROJECT_VERSION }}"
+          IMAGE_FULL_TAG="ghcr.io/${IMAGE_REPO_PATH}:${{ env.PROJECT_VERSION }}"
           
           echo "Building image with tag: $IMAGE_FULL_TAG"
           

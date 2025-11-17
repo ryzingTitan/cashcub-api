@@ -15,9 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAME: ${{ github.repository }}
-      # The version tag for the image will be the short commit SHA
-      IMAGE_TAG: ${{ github.sha }}
+      IMAGE_NAME: ${{ toLower(github.repository) }}
 
     steps:
       - uses: actions/checkout@v4

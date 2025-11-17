@@ -63,8 +63,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and Push Docker Image to GHCR
         run: |
-          echo "REPO=${GITHUB_REPOSITORY,,}" >> ${IMAGE_NAME}
-          IMAGE_FULL_TAG="ghcr.io/${{ env.IMAGE_NAME }}:v${{ env.PROJECT_VERSION }}"
+          IMAGE_REPO_PATH=${GITHUB_REPOSITORY,,}
+          IMAGE_FULL_TAG="ghcr.io/${IMAGE_REPO_PATH}:v${{ env.PROJECT_VERSION }}"
           
           echo "Building image with tag: $IMAGE_FULL_TAG"
           

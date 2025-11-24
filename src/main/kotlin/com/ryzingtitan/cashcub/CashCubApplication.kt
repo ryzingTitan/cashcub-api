@@ -9,5 +9,5 @@ import org.springframework.boot.runApplication
 class CashCubApplication
 
 fun main(args: Array<String>) {
-    runApplication<CashCubApplication>(arrayOf(args).contentDeepToString())
+    runApplication<CashCubApplication>(*args)
 }

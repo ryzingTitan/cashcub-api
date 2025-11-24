@@ -5,10 +5,14 @@ import com.ryzingtitan.cashcub.domain.transactions.dtos.TransactionRequest
 import com.ryzingtitan.cashcub.domain.transactions.enums.TransactionType
 import com.ryzingtitan.cashcub.domain.transactions.exceptions.TransactionDoesNotExistException
 import com.ryzingtitan.cashcub.domain.transactions.services.TransactionService
+import com.ryzingtitan.cashcub.presentation.configuration.GlobalExceptionHandler
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -59,7 +63,7 @@ class TransactionControllerTests {
                         notes = null,
                     )
 
-                whenever(mockTransactionService.create(transactionRequest, budgetId, budgetItemId))
+                whenever(mockTransactionService.create(any(), eq(budgetId), eq(budgetItemId)))
                     .thenReturn(transaction)
 
                 webTestClient
@@ -73,7 +77,7 @@ class TransactionControllerTests {
                     .expectBody<Transaction>()
                     .isEqualTo(transaction)
 
-                verify(mockTransactionService, times(1)).create(transactionRequest, budgetId, budgetItemId)
+                verify(mockTransactionService, times(1)).create(any(), eq(budgetId), eq(budgetItemId))
             }
     }
 
@@ -91,7 +95,7 @@ class TransactionControllerTests {
                         notes = null,
                     )
 
-                whenever(mockTransactionService.update(transactionId, budgetItemId, budgetId, transactionRequest))
+                whenever(mockTransactionService.update(eq(transactionId), eq(budgetItemId), eq(budgetId), any()))
                     .thenReturn(transaction)
 
                 webTestClient
@@ -106,38 +110,41 @@ class TransactionControllerTests {
                     .isEqualTo(transaction)
 
                 verify(mockTransactionService, times(1))
-                    .update(transactionId, budgetItemId, budgetId, transactionRequest)
+                    .update(eq(transactionId), eq(budgetItemId), eq(budgetId), any())
             }
 
         @Test
-        fun `returns 'NOT FOUND' status when transaction does not exist`() =
-            runTest {
-                val transactionRequest =
-                    TransactionRequest(
-                        date = Instant.now(),
-                        amount = amount,
-                        transactionType = TransactionType.EXPENSE,
-                        merchant = merchant,
-                        notes = null,
-                    )
+        fun `returns 'NOT FOUND' status when transaction does not exist`() {
+            val transactionRequest =
+                TransactionRequest(
+                    date = Instant.now(),
+                    amount = amount,
+                    transactionType = TransactionType.EXPENSE,
+                    merchant = merchant,
+                    notes = null,
+                )
 
-                whenever(mockTransactionService.update(transactionId, budgetItemId, budgetId, transactionRequest))
+            runBlocking {
+                whenever(mockTransactionService.update(eq(transactionId), eq(budgetItemId), eq(budgetId), any()))
                     .thenThrow(
                         TransactionDoesNotExistException("Transaction does not exist"),
                     )
-
-                webTestClient
-                    .put()
-                    .uri("/api/budgets/$budgetId/items/$budgetItemId/transactions/$transactionId")
-                    .accept(MediaType.APPLICATION_JSON)
-                    .bodyValue(transactionRequest)
-                    .exchange()
-                    .expectStatus()
-                    .isNotFound
-
-                verify(mockTransactionService, times(1))
-                    .update(transactionId, budgetItemId, budgetId, transactionRequest)
             }
+
+            webTestClient
+                .put()
+                .uri("/api/budgets/$budgetId/items/$budgetItemId/transactions/$transactionId")
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(transactionRequest)
+                .exchange()
+                .expectStatus()
+                .isNotFound
+
+            runBlocking {
+                verify(mockTransactionService, times(1))
+                    .update(eq(transactionId), eq(budgetItemId), eq(budgetId), any())
+            }
+        }
     }
 
     @Nested
@@ -160,7 +167,11 @@ class TransactionControllerTests {
     @BeforeEach
     fun setup() {
         val transactionController = TransactionController(mockTransactionService)
-        webTestClient = WebTestClient.bindToController(transactionController).build()
+        webTestClient =
+            WebTestClient
+                .bindToController(transactionController)
+                .controllerAdvice(GlobalExceptionHandler())
+                .build()
     }
 
     private lateinit var webTestClient: WebTestClient

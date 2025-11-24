@@ -3,6 +3,7 @@ package com.ryzingtitan.cashcub.presentation.controllers
 import com.ryzingtitan.cashcub.domain.transactions.dtos.Transaction
 import com.ryzingtitan.cashcub.domain.transactions.dtos.TransactionRequest
 import com.ryzingtitan.cashcub.domain.transactions.services.TransactionService
+import com.ryzingtitan.cashcub.shared.getLogger
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -27,6 +28,8 @@ import java.util.UUID
 class TransactionController(
     private val transactionService: TransactionService,
 ) {
+    private val log = getLogger<TransactionController>()
+
     @GetMapping
     @Tag(name = "Transactions")
     @Operation(summary = "Retrieve all transactions for a budget item and a budget")

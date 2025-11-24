@@ -83,6 +83,26 @@ class TransactionServiceTests {
                     appender.list[0].message,
                 )
             }
+
+        @Test
+        fun `throws 'IllegalArgumentException' when amount is zero`() =
+            runTest {
+                val transactionRequest =
+                    TransactionRequest(
+                        date = transactionDate,
+                        amount = BigDecimal.ZERO,
+                        transactionType = TransactionType.EXPENSE,
+                        merchant = merchant,
+                        notes = null,
+                    )
+
+                val exception =
+                    assertThrows<IllegalArgumentException> {
+                        transactionService.create(transactionRequest, budgetId, budgetItemId)
+                    }
+
+                assertEquals("Transaction amount must be positive", exception.message)
+            }
     }
 
     @Nested
@@ -140,14 +160,16 @@ class TransactionServiceTests {
                 verify(mockTransactionRepository, never()).save(any())
 
                 assertEquals(
-                    "Transaction does not exist for budget item id $budgetItemId and budget id $budgetId",
+                    "Transaction with id $transactionId not found",
                     exception.message,
                 )
-                assertEquals(1, appender.list.size)
-                assertEquals(Level.ERROR, appender.list[0].level)
+                assertEquals(2, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("Updating transaction with id $transactionId", appender.list[0].message)
+                assertEquals(Level.ERROR, appender.list[1].level)
                 assertEquals(
                     "Transaction does not exist for budget item id $budgetItemId and budget id $budgetId",
-                    appender.list[0].message,
+                    appender.list[1].message,
                 )
             }
     }
@@ -178,6 +200,7 @@ class TransactionServiceTests {
         logger = LoggerFactory.getLogger(TransactionService::class.java) as Logger
         appender = ListAppender()
         appender.context = LoggerContext()
+        logger.detachAndStopAllAppenders()
         logger.addAppender(appender)
         appender.start()
     }

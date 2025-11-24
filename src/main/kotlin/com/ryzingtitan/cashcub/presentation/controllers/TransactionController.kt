@@ -127,6 +127,7 @@ class TransactionController(
         @RequestBody transactionRequest: TransactionRequest,
     ): Transaction = transactionService.update(transactionId, budgetItemId, budgetId, transactionRequest)
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{transactionId}")
     @Tag(name = "Transactions")
     @Operation(summary = "Delete an existing transaction")
@@ -134,7 +135,7 @@ class TransactionController(
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200",
+                responseCode = "204",
                 description = "Transaction deleted successfully",
             ),
             ApiResponse(

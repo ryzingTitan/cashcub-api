@@ -143,7 +143,7 @@ class TransactionControllerTests {
     @Nested
     inner class DeleteTransaction {
         @Test
-        fun `returns 'OK' status`() =
+        fun `returns 'NO CONTENT' status`() =
             runTest {
                 webTestClient
                     .delete()
@@ -151,7 +151,7 @@ class TransactionControllerTests {
                     .accept(MediaType.APPLICATION_JSON)
                     .exchange()
                     .expectStatus()
-                    .isOk
+                    .isNoContent
 
                 verify(mockTransactionService, times(1)).delete(transactionId, budgetItemId, budgetId)
             }

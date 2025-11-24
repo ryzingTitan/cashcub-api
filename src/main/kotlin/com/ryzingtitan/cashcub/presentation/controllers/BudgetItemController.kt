@@ -101,6 +101,7 @@ class BudgetItemController(
         @RequestBody budgetItemRequest: BudgetItemRequest,
     ): BudgetItem = budgetItemService.update(budgetItemId, budgetId, budgetItemRequest)
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{budgetItemId}")
     @Tag(name = "Budget Items")
     @Operation(summary = "Delete an existing budget item")
@@ -108,7 +109,7 @@ class BudgetItemController(
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200",
+                responseCode = "204",
                 description = "Budget Item deleted successfully",
             ),
             ApiResponse(

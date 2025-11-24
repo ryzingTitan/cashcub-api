@@ -16,7 +16,7 @@ Feature: Delete budget item
   Scenario: Delete an existing budget item
     Given the user has a valid authorization token
     When a budget item with id 'ef91a488-e596-44cc-ac02-5fd2b166f8c6' is deleted for budget '8fca0def-5086-4cae-af5e-11a217288806'
-    Then the request response status is 'OK'
+    Then the request response status is 'NO_CONTENT'
     And the following budget items will exist:
       | name      | plannedAmount | budgetId                             | categoryName |
       | Groceries | 200.0000      | 8fca0def-5086-4cae-af5e-11a217288806 | Food         |
@@ -29,7 +29,7 @@ Feature: Delete budget item
   Scenario: Do not delete a budget item that does not exist
     Given the user has a valid authorization token
     When a budget item with id '388f4192-6e21-4ab0-80f0-fbf99a50d755' is deleted for budget '8fca0def-5086-4cae-af5e-11a217288806'
-    Then the request response status is 'OK'
+    Then the request response status is 'NO_CONTENT'
     And the following budget items will exist:
       | name            | plannedAmount | budgetId                             | categoryName   |
       | Car Maintenance | 100.7500      | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |

@@ -133,7 +133,7 @@ class BudgetItemControllerTests {
     @Nested
     inner class DeleteBudgetItem {
         @Test
-        fun `returns 'OK' status`() =
+        fun `returns 'NO CONTENT' status`() =
             runTest {
                 webTestClient
                     .delete()
@@ -141,7 +141,7 @@ class BudgetItemControllerTests {
                     .accept(MediaType.APPLICATION_JSON)
                     .exchange()
                     .expectStatus()
-                    .isOk
+                    .isNoContent
 
                 verify(mockBudgetItemService, times(1)).delete(budgetItemId, budgetId)
             }

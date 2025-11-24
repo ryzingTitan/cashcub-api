@@ -16,7 +16,7 @@ Feature: Delete transaction
   Scenario: Delete an existing transaction
     Given the user has a valid authorization token
     When a transaction with id '1de572a9-8deb-49c7-88b7-4f353722b224' is deleted for budget item 'ef91a488-e596-44cc-ac02-5fd2b166f8c6' and budget '8fca0def-5086-4cae-af5e-11a217288806'
-    Then the request response status is 'OK'
+    Then the request response status is 'NO_CONTENT'
     And the following transactions will exist:
       | date                     | amount  | transactionType | merchant | notes | budgetId                             | budgetItemId                         |
       | 2025-09-28T05:45:26.853Z | 16.0000 | EXPENSE         | Autozone |       | 8fca0def-5086-4cae-af5e-11a217288806 | ef91a488-e596-44cc-ac02-5fd2b166f8c6 |
@@ -27,7 +27,7 @@ Feature: Delete transaction
   Scenario: Do not delete a budget item that does not exist
     Given the user has a valid authorization token
     When a transaction with id '2b50aac9-f8b8-4363-a307-e44c7d6453f4' is deleted for budget item 'ef91a488-e596-44cc-ac02-5fd2b166f8c6' and budget '8fca0def-5086-4cae-af5e-11a217288806'
-    Then the request response status is 'OK'
+    Then the request response status is 'NO_CONTENT'
     And the following transactions will exist:
       | date                     | amount  | transactionType | merchant  | notes       | budgetId                             | budgetItemId                         |
       | 2025-09-28T05:47:26.853Z | 50.2500 | EXPENSE         | Rock Auto | Fuel Filter | 8fca0def-5086-4cae-af5e-11a217288806 | ef91a488-e596-44cc-ac02-5fd2b166f8c6 |

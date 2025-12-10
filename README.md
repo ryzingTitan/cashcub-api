@@ -1,6 +1,6 @@
 # CashCub API
 
-A Spring Boot 3 reactive REST API built with Kotlin for personal budget tracking.
+A Spring Boot 4 reactive REST API built with Kotlin for personal budget tracking.
 
 ## Overview
 
@@ -9,7 +9,7 @@ CashCub API is a modern, reactive backend service that enables users to manage t
 ## Tech Stack
 
 - **Language**: Kotlin
-- **Framework**: Spring Boot 3 with WebFlux
+- **Framework**: Spring Boot 4 with WebFlux
 - **Database**: PostgreSQL with R2DBC (reactive)
 - **Authentication**: OAuth2 JWT (Auth0)
 - **Testing**: JUnit 5, Mockito Kotlin, Cucumber BDD
@@ -200,3 +200,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 ## Contributing
 
 [Add contributing guidelines here]
+
+## AI Development
+
+For AI coding assistants like Claude Code, see [CLAUDE.md](CLAUDE.md) for architecture details, common commands, and development patterns specific to this codebase.

@@ -8,7 +8,6 @@ import com.ryzingtitan.cashcub.domain.budgets.dtos.BudgetRequest
 import com.ryzingtitan.cashcub.domain.budgets.dtos.BudgetSummary
 import com.ryzingtitan.cashcub.domain.budgets.exceptions.DuplicateBudgetException
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -46,7 +45,7 @@ class BudgetService(
         val endYear = endDate.split("-")[1].toInt()
 
         return budgetRepository
-            .findAllByBudgetMonthBetweenAndBudgetYearBetween(startMonth, endMonth, startYear, endYear)
+            .findBudgetsInRange(startMonth, endMonth, startYear, endYear)
             .map {
                 Budget(
                     id = it.id!!,

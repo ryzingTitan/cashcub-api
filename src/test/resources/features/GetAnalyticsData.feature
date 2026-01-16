@@ -3,8 +3,8 @@ Feature: Get budget summaries for analytics
   Background:
     Given the following budgets exist:
       | id                                   | budgetMonth | budgetYear |
-      | 8fca0def-5086-4cae-af5e-11a217288806 | 9           | 2025       |
-      | d6c4b213-c67f-4fac-8965-a696a6308fc1 | 10          | 2025       |
+      | 8fca0def-5086-4cae-af5e-11a217288806 | 12          | 2025       |
+      | d6c4b213-c67f-4fac-8965-a696a6308fc1 | 1           | 2026       |
     And the following budget items exist:
       | id                                   | name            | plannedAmount | budgetId                             | categoryName   |
       | ef91a488-e596-44cc-ac02-5fd2b166f8c6 | Car Maintenance | 100.75        | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |
@@ -21,11 +21,11 @@ Feature: Get budget summaries for analytics
 
   Scenario: Get budget summaries for a single month
     Given the user has a valid authorization token
-    When analytics data is retrieved for date range from '9-2025' to '9-2025'
+    When analytics data is retrieved for date range from '12-2025' to '12-2025'
     Then the request response status is 'OK'
     And the following budget summaries are returned:
       | month | year | expectedIncome | actualIncome | expectedExpenses | actualExpenses |
-      | 9     | 2025 | 2400.00        | 1200.00      | 300.75           | 111.75         |
+      | 12    | 2025 | 2400.00        | 1200.00      | 300.75           | 111.75         |
     And the following budget items are returned in the summary for budget '8fca0def-5086-4cae-af5e-11a217288806':
       | name            | plannedAmount | actualAmount | budgetId                             | categoryName   |
       | Car Maintenance | 100.75        | 66.25        | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |
@@ -34,17 +34,17 @@ Feature: Get budget summaries for analytics
       | Second Paycheck | 1200.00       | 0.00         | 8fca0def-5086-4cae-af5e-11a217288806 | Income         |
     And the application will log the following messages:
       | level | message                                                                      |
-      | INFO  | Retrieving all budgets from 9-2025 to 9-2025                                 |
+      | INFO  | Retrieving all budgets from 12-2025 to 12-2025                               |
       | INFO  | Retrieving budget summary for budget id 8fca0def-5086-4cae-af5e-11a217288806 |
 
   Scenario: Get budget summaries for a multiple months
     Given the user has a valid authorization token
-    When analytics data is retrieved for date range from '9-2025' to '10-2025'
+    When analytics data is retrieved for date range from '12-2025' to '1-2026'
     Then the request response status is 'OK'
     And the following budget summaries are returned:
       | month | year | expectedIncome | actualIncome | expectedExpenses | actualExpenses |
-      | 9     | 2025 | 2400.00        | 1200.00      | 300.75           | 111.75         |
-      | 10    | 2025 | 1200.00        | 0.00         | 0.00             | 0.00           |
+      | 12    | 2025 | 2400.00        | 1200.00      | 300.75           | 111.75         |
+      | 1     | 2026 | 1200.00        | 0.00         | 0.00             | 0.00           |
     And the following budget items are returned in the summary for budget '8fca0def-5086-4cae-af5e-11a217288806':
       | name            | plannedAmount | actualAmount | budgetId                             | categoryName   |
       | Car Maintenance | 100.75        | 66.25        | 8fca0def-5086-4cae-af5e-11a217288806 | Transportation |
@@ -56,7 +56,7 @@ Feature: Get budget summaries for analytics
       | Second Paycheck | 1200.00       | 0.00         | d6c4b213-c67f-4fac-8965-a696a6308fc1 | Income       |
     And the application will log the following messages:
       | level | message                                                                      |
-      | INFO  | Retrieving all budgets from 9-2025 to 10-2025                                |
+      | INFO  | Retrieving all budgets from 12-2025 to 1-2026                                |
       | INFO  | Retrieving budget summary for budget id 8fca0def-5086-4cae-af5e-11a217288806 |
       | INFO  | Retrieving budget summary for budget id d6c4b213-c67f-4fac-8965-a696a6308fc1 |
 

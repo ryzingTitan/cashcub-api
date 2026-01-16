@@ -57,13 +57,13 @@ class BudgetServiceTests {
         fun `returns all budgets for date range`() =
             runTest {
                 whenever(
-                    mockBudgetRepository.findAllByBudgetMonthBetweenAndBudgetYearBetween(9, 10, 2025, 2025),
+                    mockBudgetRepository.findBudgetsInRange(9, 10, 2025, 2025),
                 ).thenReturn(flowOf(firstBudgetEntity, secondBudgetEntity))
 
                 val budgets = budgetService.getAllForRange("9-2025", "10-2025")
 
                 verify(mockBudgetRepository, times(1))
-                    .findAllByBudgetMonthBetweenAndBudgetYearBetween(9, 10, 2025, 2025)
+                    .findBudgetsInRange(9, 10, 2025, 2025)
 
                 assertEquals(listOf(firstBudget, secondBudget), budgets.toList())
                 assertEquals(1, appender.list.size)
